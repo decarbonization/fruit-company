@@ -35,7 +35,9 @@
   "dependencies": {
     "@types/jsonwebtoken": "^9.0.6",
     "date-fns": "^3.6.0",
-    "jsonwebtoken": "^9.0.2"
+    "jsonwebtoken": "^9.0.2",
+    "save-dev": "^0.0.1-security",
+    "ts-jest": "^29.1.4"
   },
   "engines": {
     "node": ">=20.0",
