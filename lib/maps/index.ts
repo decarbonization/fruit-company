@@ -18,4 +18,5 @@
  */
 
 export * from "./models";
-export * from "./api";
+export * from "./maps-token"
+export * from "./maps-geocoding";

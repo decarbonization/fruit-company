@@ -52,3 +52,28 @@ export interface Weather {
      */
     readonly weatherAlerts?: WeatherAlertCollection;
 }
+
+/**
+ * Create a `Weather` object from a given JSON representation.
+ * 
+ * @param raw A string containing a JSON representation of a `Weather` object.
+ * @returns A parsed `Weather` object ready for use.
+ */
+export function parseWeather(raw: string): Weather {
+    const object = JSON.parse(raw, (key, value) => {
+        if (typeof value === 'string' && (key === "asOf"
+            || key === "moonrise"
+            || key === "moonset"
+            || key.startsWith("solar")
+            || key.startsWith("sunrise")
+            || key.startsWith("sunset")
+            || key.endsWith("Time")
+            || key.endsWith("End")
+            || key.endsWith("Start"))) {
+            return new Date(value);
+        } else {
+            return value;
+        }
+    });
+    return object as Weather;
+}

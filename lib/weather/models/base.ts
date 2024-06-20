@@ -18,6 +18,11 @@
  */
 
 /**
+ * A string containing the URL of the Apple WeatherKit REST services.
+ */
+export const weatherKitUrl = "https://weatherkit.apple.com";
+
+/**
  * A base type for all weather data.
  */
 export interface ProductData {

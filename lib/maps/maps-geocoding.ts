@@ -17,108 +17,14 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-import { addSeconds } from "date-fns";
-import jwt, { JwtHeader } from "jsonwebtoken";
 import { FruitError } from "../core/error";
-import { FetchFunction } from "../core/fetch";
 import { LocationCoordinates, urlLocationCoordinates } from "../core/models/common";
 import { FruitRequest } from "../core/request";
-import { FruitToken } from "../core/token";
+import { MapsToken } from "./maps-token";
+import { MapErrorResponse, mapKitApiUrl } from "./models";
 import { PlaceResults } from "./models/places";
 
-const apiUrl = "https://maps-api.apple.com/v1";
-
-/**
- * An object that contains an access token and an expiration time in seconds.
- */
-interface TokenResponse {
-    /**
-     * A string that represents the access token.
-     */
-    readonly accessToken: string;
-
-    /**
-     * An integer that indicates the time, in seconds from now until the token expires.
-     */
-    readonly expiresInSeconds: number;
-}
-
-/**
- * Information about an error that occurs while processing a request.
- */
-interface ErrorResponse {
-    /**
-     * An array of strings with additional details about the error
-     */
-    readonly details: string[];
-
-    /**
-     * A message that provides details about the error.
-     */
-    readonly message: string;
-}
-
-export class MapsToken implements FruitToken {
-    constructor(
-        private readonly appId: string,
-        private readonly teamId: string,
-        private readonly keyId: string,
-        private readonly privateKey: string | Buffer
-    ) {
-        this.accessToken = "";
-        this.expiresAt = new Date(0);
-    }
-
-    private accessToken: string;
-    private expiresAt: Date;
-
-    get headers(): Headers {
-        return new Headers([
-            ["Authorization", `Bearer ${this.accessToken}`],
-        ]);
-    }
-
-    get retryLimit(): number {
-        return 2;
-    }
-
-    get isValid(): boolean {
-        return (this.accessToken !== "" && new Date() > this.expiresAt);
-    }
-
-    async refresh(fetch: FetchFunction): Promise<void> {
-        const authToken = jwt.sign({
-            sub: this.appId,
-        }, this.privateKey, {
-            issuer: this.teamId,
-            expiresIn: "1m",
-            keyid: this.keyId,
-            algorithm: "ES256",
-            header: {
-                id: `${this.teamId}.${this.appId}`,
-            } as unknown as JwtHeader,
-        });
-
-        const response = await fetch(`${apiUrl}/token`, {
-            headers: {
-                Authorization: `Bearer ${authToken}`,
-            },
-        });
-        if (!response.ok) {
-            const errorResponse = await response.json() as ErrorResponse;
-            throw new FruitError(
-                response.status,
-                response.statusText,
-                `${errorResponse.message} (${errorResponse.details.join(', ')})`
-            );
-        }
-        const tokenResponse = await response.json() as TokenResponse;
-        this.accessToken = tokenResponse.accessToken;
-        this.expiresAt = addSeconds(new Date(), tokenResponse.expiresInSeconds);
-    }
-}
-
-class MapsRequest<Result> implements FruitRequest<MapsToken, Result> {
+class MapsGeocodingRequest<Result> implements FruitRequest<MapsToken, Result> {
     constructor() {
     }
 
@@ -128,7 +34,7 @@ class MapsRequest<Result> implements FruitRequest<MapsToken, Result> {
 
     async parse(fetchResponse: Response): Promise<Result> {
         if (!fetchResponse.ok) {
-            const errorResponse = await fetchResponse.json() as ErrorResponse;
+            const errorResponse = await fetchResponse.json() as MapErrorResponse;
             throw new FruitError(
                 fetchResponse.status,
                 fetchResponse.statusText,
@@ -139,7 +45,7 @@ class MapsRequest<Result> implements FruitRequest<MapsToken, Result> {
     }
 }
 
-export class GeocodeAddress extends MapsRequest<PlaceResults> {
+export class GeocodeAddress extends MapsGeocodingRequest<PlaceResults> {
     constructor(readonly options: Readonly<{
         query: string,
         limitToCountries?: string[],
@@ -152,7 +58,7 @@ export class GeocodeAddress extends MapsRequest<PlaceResults> {
     }
 
     override prepare(token: MapsToken): Request {
-        const url = new URL(`${apiUrl}/geocode`);
+        const url = new URL(`${mapKitApiUrl}/geocode`);
         url.searchParams.append("q", this.options.query);
         if (this.options.limitToCountries !== undefined) {
             url.searchParams.append("limitToCountries", this.options.limitToCountries.join(","));
@@ -177,7 +83,7 @@ export class GeocodeAddress extends MapsRequest<PlaceResults> {
     }
 }
 
-export class ReverseGeocodeAddress extends MapsRequest<PlaceResults> {
+export class ReverseGeocodeAddress extends MapsGeocodingRequest<PlaceResults> {
     constructor(readonly options: Readonly<{
         location: LocationCoordinates,
         language?: string,
@@ -186,7 +92,7 @@ export class ReverseGeocodeAddress extends MapsRequest<PlaceResults> {
     }
 
     override prepare(token: MapsToken): Request {
-        const url = new URL(`${apiUrl}/reverseGeocode`);
+        const url = new URL(`${mapKitApiUrl}/reverseGeocode`);
         url.searchParams.append("loc", urlLocationCoordinates(this.options.location));
         if (this.options.language !== undefined) {
             url.searchParams.append("lang", this.options.language);

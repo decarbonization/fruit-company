@@ -18,6 +18,26 @@
  */
 
 /**
+ * A string containing the URL of the Apple MapKit API REST services.
+ */
+export const mapKitApiUrl = "https://maps-api.apple.com/v1";
+
+/**
+ * Information about an error that occurs while processing a request.
+ */
+export interface MapErrorResponse {
+    /**
+     * An array of strings with additional details about the error
+     */
+    readonly details: string[];
+
+    /**
+     * A message that provides details about the error.
+     */
+    readonly message: string;
+}
+
+/**
  * An object that describes a map region in terms of its upper-right and lower-left corners as a pair of geographic points.
  */
 export interface MapRegion {
