@@ -19,30 +19,45 @@
 
 import { FruitError } from "./error";
 import { FetchFunction, defaultFetch } from "./fetch";
+import { FruitLogger, defaultLogger } from "./logger";
 import { FruitRequest } from "./request";
 import { FruitToken } from "./token";
 
 export interface FruitPerformOptions<Token extends FruitToken, Result> {
     readonly token: Token;
     readonly request: FruitRequest<Token, Result>;
+
+    /**
+     * The fetch function to use to perform network operations.
+     */
     readonly fetch?: FetchFunction;
+
+    /**
+     * The logger to use to record the internal operations of the perform function.
+     */
+    readonly logger?: FruitLogger;
 }
 
 export async function perform<T extends FruitToken, R>({
     token,
     request,
     fetch = defaultFetch,
+    logger = defaultLogger,
 }: FruitPerformOptions<T, R>): Promise<R> {
     if (!token.isValid) {
+        logger({ event: "willRefreshToken", token });
         await token.refresh(fetch);
     }
     for (let retry = 0, retryLimit = token.retryLimit; retry <= retryLimit; retry++) {
         const fetchRequest = request.prepare(token);
+        logger({ event: "willFetch", fetchRequest });
         const fetchResponse = await fetch(fetchRequest);
         if (!fetchResponse.ok && fetchResponse.status === 401) {
+            logger({ event: "willRefreshToken", token, retry });
             await token.refresh(fetch);
             continue;
         }
+        logger({ event: "willParse", fetchResponse });
         return await request.parse(fetchResponse);
     }
     throw new FruitError(401, "Unauthorized", "Retry limit exceeded");
