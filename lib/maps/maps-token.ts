@@ -21,7 +21,7 @@ import { addSeconds } from "date-fns";
 import jwt, { JwtHeader } from "jsonwebtoken";
 import { FruitError } from "../core/error";
 import { FetchFunction } from "../core/fetch";
-import { FruitToken } from "../core/token";
+import { FruitToken, FruitTokenError } from "../core/token";
 import { MapErrorResponse, mapKitApiUrl } from "./models";
 
 /**
@@ -39,7 +39,18 @@ interface TokenResponse {
     readonly expiresInSeconds: number;
 }
 
+/**
+ * A token used to interact with weather services.
+ */
 export class MapsToken implements FruitToken {
+    /**
+     * Create a token to interact with weather services.
+     * 
+     * @param appId An app identifier from an Apple developer account.
+     * @param teamId A team identifier from an Apple developer account.
+     * @param keyId The identifier of the key used to sign requests.
+     * @param privateKey A WeatherKit REST key generated using an Apple developer account.
+     */
     constructor(
         private readonly appId: string,
         private readonly teamId: string,
@@ -50,10 +61,23 @@ export class MapsToken implements FruitToken {
         this.expiresAt = new Date(0);
     }
 
+    /**
+     * The bearer token used to decorate requests.
+     */
     private accessToken: string;
+
+    /**
+     * When this token expires.
+     */
     private expiresAt: Date;
 
-    get headers(): Headers {
+    /**
+     * @ignore
+     */
+    get _headers(): Headers {
+        if (!this.isValid) {
+            throw new FruitTokenError("Invalid WeatherToken cannot be used to authenticate requests.");
+        }
         return new Headers([
             ["Authorization", `Bearer ${this.accessToken}`],
         ]);

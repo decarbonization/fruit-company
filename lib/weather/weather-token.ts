@@ -18,9 +18,20 @@
  */
 
 import jwt, { JwtHeader } from "jsonwebtoken";
-import { FetchFunction, FruitToken } from "../core";
+import { FetchFunction, FruitToken, FruitTokenError } from "../core";
 
+/**
+ * A token used to interact with weather services.
+ */
 export class WeatherToken implements FruitToken {
+    /**
+     * Create a token to interact with weather services.
+     * 
+     * @param appId An app identifier from an Apple developer account.
+     * @param teamId A team identifier from an Apple developer account.
+     * @param keyId The identifier of the key used to sign requests.
+     * @param privateKey A WeatherKit REST key generated using an Apple developer account.
+     */
     constructor(
         private readonly appId: string,
         private readonly teamId: string,
@@ -30,20 +41,41 @@ export class WeatherToken implements FruitToken {
         this.bearerToken = "";
     }
 
+    /**
+     * The bearer token used to decorate requests.
+     */
     private bearerToken: string;
 
     get retryLimit(): number {
         return 1;
     }
     
-    get headers(): Headers {
+    /**
+     * @ignore
+     */
+    get _headers(): Headers {
+        if (!this.isValid) {
+            throw new FruitTokenError("Invalid WeatherToken cannot be used to authenticate requests.");
+        }
         return new Headers([
             ["Authorization", `Bearer ${this.bearerToken}`],
         ]);
     }
 
     get isValid(): boolean {
-        return (this.bearerToken !== "");
+        if (this.bearerToken === "") {
+            return false;
+        }
+        const payload = jwt.decode(this.bearerToken);
+        if (payload === null || typeof payload !== 'object') {
+            return false;
+        }
+        const rawExpiration = payload.exp;
+        if (rawExpiration === undefined) {
+            return false;
+        }
+        const expiration = new Date(rawExpiration * 1000);
+        return (new Date() < expiration);
     }
 
     async refresh(_fetch: FetchFunction): Promise<void> {

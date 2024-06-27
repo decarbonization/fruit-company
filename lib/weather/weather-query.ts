@@ -80,7 +80,7 @@ export class WeatherQuery implements FruitRequest<WeatherToken, Weather> {
             // Including both parameters here just in case.
             url.searchParams.append("country", this.options.countryCode);
         }
-        return new Request(url, { headers: token.headers });
+        return new Request(url, { headers: token._headers });
     }
 
     async parse(fetchResponse: Response): Promise<Weather> {

@@ -19,8 +19,33 @@
 
 import { FetchFunction } from "./fetch";
 
+/**
+ * An object which is used to authenticate requests to a service.
+ */
 export interface FruitToken {
+    /**
+     * The number of times a token may be refreshed 
+     * in response to a request failing due to a token
+     * no longer being valid.
+     */
     readonly retryLimit: number;
+
+    /**
+     * Whether this token may currently be valid.
+     */
     readonly isValid: boolean;
+
+    /**
+     * Refresh this token to further authentic requests to a service.
+     * 
+     * @param fetch The fetch function to use for any network requests.
+     */
     refresh(fetch: FetchFunction): Promise<void>;
+}
+
+/**
+ * Encapsulates an error which occurred when working with an authentication token.
+ */
+export class FruitTokenError extends Error {
+
 }

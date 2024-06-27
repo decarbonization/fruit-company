@@ -75,7 +75,7 @@ export class GeocodeAddress extends MapsGeocodingRequest<PlaceResults> {
         if (this.options.userLocation !== undefined) {
             url.searchParams.append("userLocation", urlLocationCoordinates(this.options.userLocation));
         }
-        return new Request(url, { headers: token.headers });
+        return new Request(url, { headers: token._headers });
     }
 
     override toString(): string {
@@ -97,7 +97,7 @@ export class ReverseGeocodeAddress extends MapsGeocodingRequest<PlaceResults> {
         if (this.options.language !== undefined) {
             url.searchParams.append("lang", this.options.language);
         }
-        return new Request(url, { headers: token.headers });
+        return new Request(url, { headers: token._headers });
     }
 
     override toString(): string {
