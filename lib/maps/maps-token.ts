@@ -19,9 +19,8 @@
 
 import { addSeconds } from "date-fns";
 import jwt, { JwtHeader } from "jsonwebtoken";
+import { FetchAuthorityAuthenticateOptions, FruitAuthority, FruitAuthorityError, FruitAuthorityRefreshOptions } from "../core/authority";
 import { FruitError } from "../core/error";
-import { FetchFunction } from "../core/fetch";
-import { FruitToken, FruitTokenError } from "../core/token";
 import { MapErrorResponse, mapKitApiUrl } from "./models";
 
 /**
@@ -42,7 +41,7 @@ interface TokenResponse {
 /**
  * A token used to interact with weather services.
  */
-export class MapsToken implements FruitToken {
+export class MapsToken implements FruitAuthority {
     /**
      * Create a token to interact with weather services.
      * 
@@ -71,18 +70,6 @@ export class MapsToken implements FruitToken {
      */
     private expiresAt: Date;
 
-    /**
-     * @ignore
-     */
-    get _headers(): Headers {
-        if (!this.isValid) {
-            throw new FruitTokenError("Invalid WeatherToken cannot be used to authenticate requests.");
-        }
-        return new Headers([
-            ["Authorization", `Bearer ${this.accessToken}`],
-        ]);
-    }
-
     get retryLimit(): number {
         return 2;
     }
@@ -91,7 +78,7 @@ export class MapsToken implements FruitToken {
         return (this.accessToken !== "" && new Date() > this.expiresAt);
     }
 
-    async refresh(fetch: FetchFunction): Promise<void> {
+    async refresh({ fetch }: FruitAuthorityRefreshOptions): Promise<void> {
         const authToken = jwt.sign({
             sub: this.appId,
         }, this.privateKey, {
@@ -120,5 +107,12 @@ export class MapsToken implements FruitToken {
         const tokenResponse = await response.json() as TokenResponse;
         this.accessToken = tokenResponse.accessToken;
         this.expiresAt = addSeconds(new Date(), tokenResponse.expiresInSeconds);
+    }
+
+    async authenticate({ fetchRequest }: FetchAuthorityAuthenticateOptions): Promise<void> {
+        if (!this.isValid) {
+            throw new FruitAuthorityError("Invalid WeatherToken cannot be used to authenticate requests.");
+        }
+        fetchRequest.headers.set("Authorization", `Bearer ${this.accessToken}`);
     }
 }

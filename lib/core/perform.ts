@@ -21,11 +21,18 @@ import { FruitError } from "./error";
 import { FetchFunction, defaultFetch } from "./fetch";
 import { FruitLogger, defaultLogger } from "./logger";
 import { FruitRequest } from "./request";
-import { FruitToken } from "./token";
+import { FruitAuthority } from "./authority";
 
-export interface FruitPerformOptions<Token extends FruitToken, Result> {
-    readonly token: Token;
-    readonly request: FruitRequest<Token, Result>;
+export interface FruitPerformOptions<Authority extends FruitAuthority, Result> {
+    /**
+     * The object to use to authenticate the `request` to a service.
+     */
+    readonly authority: Authority;
+
+    /**
+     * An object encapsulating a request to a RESTful API service.
+     */
+    readonly request: FruitRequest<Authority, Result>;
 
     /**
      * The fetch function to use to perform network operations.
@@ -38,27 +45,29 @@ export interface FruitPerformOptions<Token extends FruitToken, Result> {
     readonly logger?: FruitLogger;
 }
 
-export async function perform<T extends FruitToken, R>({
-    token,
+export async function perform<A extends FruitAuthority, R>({
+    authority,
     request,
     fetch = defaultFetch,
     logger = defaultLogger,
-}: FruitPerformOptions<T, R>): Promise<R> {
-    if (!token.isValid) {
-        logger({ event: "willRefreshToken", token });
-        await token.refresh(fetch);
+}: FruitPerformOptions<A, R>): Promise<R> {
+    if (!authority.isValid) {
+        logger({ event: "willRefreshAuthority", authority });
+        await authority.refresh({ fetch });
     }
-    for (let retry = 0, retryLimit = token.retryLimit; retry <= retryLimit; retry++) {
-        const fetchRequest = request.prepare(token);
+    for (let retry = 0, retryLimit = authority.retryLimit; retry <= retryLimit; retry++) {
+        const fetchRequest = request.prepare({ authority });
+        logger({ event: "willAuthenticate", authority, fetchRequest });
+        authority.authenticate({ fetchRequest });
         logger({ event: "willFetch", fetchRequest });
         const fetchResponse = await fetch(fetchRequest);
         if (!fetchResponse.ok && fetchResponse.status === 401) {
-            logger({ event: "willRefreshToken", token, retry });
-            await token.refresh(fetch);
+            logger({ event: "willRefreshAuthority", authority, retry });
+            await authority.refresh({ fetch });
             continue;
         }
         logger({ event: "willParse", fetchResponse });
-        return await request.parse(fetchResponse);
+        return await request.parse({ authority, fetchResponse });
     }
     throw new FruitError(401, "Unauthorized", "Retry limit exceeded");
 }

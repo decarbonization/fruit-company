@@ -18,12 +18,12 @@
  */
 
 import jwt, { JwtHeader } from "jsonwebtoken";
-import { FetchFunction, FruitToken, FruitTokenError } from "../core";
+import { FetchAuthorityAuthenticateOptions, FruitAuthority, FruitAuthorityError, FruitAuthorityRefreshOptions } from "../core";
 
 /**
  * A token used to interact with weather services.
  */
-export class WeatherToken implements FruitToken {
+export class WeatherToken implements FruitAuthority {
     /**
      * Create a token to interact with weather services.
      * 
@@ -49,18 +49,6 @@ export class WeatherToken implements FruitToken {
     get retryLimit(): number {
         return 1;
     }
-    
-    /**
-     * @ignore
-     */
-    get _headers(): Headers {
-        if (!this.isValid) {
-            throw new FruitTokenError("Invalid WeatherToken cannot be used to authenticate requests.");
-        }
-        return new Headers([
-            ["Authorization", `Bearer ${this.bearerToken}`],
-        ]);
-    }
 
     get isValid(): boolean {
         if (this.bearerToken === "") {
@@ -78,7 +66,7 @@ export class WeatherToken implements FruitToken {
         return (new Date() < expiration);
     }
 
-    async refresh(_fetch: FetchFunction): Promise<void> {
+    async refresh({ }: FruitAuthorityRefreshOptions): Promise<void> {
         this.bearerToken = jwt.sign({
             sub: this.appId,
         }, this.privateKey, {
@@ -90,5 +78,12 @@ export class WeatherToken implements FruitToken {
                 id: `${this.teamId}.${this.appId}`,
             } as unknown as JwtHeader,
         });
+    }
+
+    async authenticate({ fetchRequest }: FetchAuthorityAuthenticateOptions): Promise<void> {
+        if (!this.isValid) {
+            throw new FruitAuthorityError("Invalid WeatherToken cannot be used to authenticate requests.");
+        }
+        fetchRequest.headers.set("Authorization", `Bearer ${this.bearerToken}`);
     }
 }

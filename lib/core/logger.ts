@@ -1,11 +1,12 @@
-import { FruitToken } from "./token";
+import { FruitAuthority } from "./authority";
 
 /**
  * An event describing an operation which the fruit-company
  * library is about to or has undertaken.
  */
 export type FruitLogEvent =
-    | { event: "willRefreshToken", token: FruitToken, retry?: number }
+    | { event: "willRefreshAuthority", authority: FruitAuthority, retry?: number }
+    | { event: "willAuthenticate", authority: FruitAuthority, fetchRequest: Request }
     | { event: "willFetch", fetchRequest: Request }
     | { event: "willParse", fetchResponse: Response };
 

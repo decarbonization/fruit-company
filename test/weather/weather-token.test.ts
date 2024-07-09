@@ -16,14 +16,14 @@ wHYtSkc1
             it("should be invalid before calling refresh", async () => {
                 const token = new WeatherToken(appId, teamId, keyId, privateKey);
                 expect(token.isValid).toStrictEqual(false);
-                await token.refresh(globalThis.fetch);
+                await token.refresh({ fetch: globalThis.fetch });
                 expect(token.isValid).toStrictEqual(true);
             });
 
             it("should be invalid with expired token", async () => {
                 const token = new WeatherToken(appId, teamId, keyId, privateKey);
 
-                await token.refresh(globalThis.fetch);
+                await token.refresh({ fetch: globalThis.fetch });
                 expect(token.isValid).toStrictEqual(true);
 
                 // Inject an expired bearer token
@@ -36,11 +36,12 @@ wHYtSkc1
             });
         });
 
-        describe("#_headers", () => {
-            it("should throw on invalid token", () => {
+        describe("#authenticate", () => {
+            it("should throw on invalid token", async () => {
                 const token = new WeatherToken(appId, teamId, keyId, privateKey);
+                const fetchRequest = new Request("http://localhost:3000");
                 expect(token.isValid).toStrictEqual(false);
-                expect(() => token._headers).toThrow();
+                await expect(async () => await token.authenticate({ fetchRequest })).rejects.toThrow();
             });
         });
     });

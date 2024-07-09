@@ -19,7 +19,7 @@
 
 import { FruitError } from "../core/error";
 import { LocationCoordinates, urlLocationCoordinates } from "../core/models/common";
-import { FruitRequest } from "../core/request";
+import { FruitRequest, FruitRequestParseOptions, FruitRequestPrepareOptions } from "../core/request";
 import { weatherKitUrl } from "./models";
 import { Weather, parseWeather } from "./models/weather";
 import { WeatherToken } from "./weather-token";
@@ -57,7 +57,7 @@ export class WeatherQuery implements FruitRequest<WeatherToken, Weather> {
     constructor(readonly options: WeatherQueryOptions) {
     }
 
-    prepare(token: WeatherToken): Request {
+    prepare({ }: FruitRequestPrepareOptions<WeatherToken>): Request {
         const url = new URL(`${weatherKitUrl}/api/v1/weather/${this.options.language}/${this.options.location.latitude}/${this.options.location.longitude}`);
         for (const [key, value] of Object.entries(this.options)) {
             if (Array.isArray(value)) {
@@ -80,10 +80,10 @@ export class WeatherQuery implements FruitRequest<WeatherToken, Weather> {
             // Including both parameters here just in case.
             url.searchParams.append("country", this.options.countryCode);
         }
-        return new Request(url, { headers: token._headers });
+        return new Request(url);
     }
 
-    async parse(fetchResponse: Response): Promise<Weather> {
+    async parse({ fetchResponse }: FruitRequestParseOptions<WeatherToken>): Promise<Weather> {
         if (!fetchResponse.ok) {
             throw new FruitError(fetchResponse.status, fetchResponse.statusText, `<${fetchResponse.url}>`);
         }

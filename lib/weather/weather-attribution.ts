@@ -17,7 +17,7 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-import { FruitRequest } from "../core";
+import { FruitRequest, FruitRequestParseOptions, FruitRequestPrepareOptions } from "../core";
 import { Attribution, weatherKitUrl } from "./models";
 import { WeatherToken } from "./weather-token";
 
@@ -29,12 +29,12 @@ export class WeatherAttribution implements FruitRequest<WeatherToken, Attributio
     constructor(readonly options: WeatherAttributionOptions) {
     }
 
-    prepare(_token: WeatherToken): Request {
+    prepare({ }: FruitRequestPrepareOptions<WeatherToken>): Request {
         const url = new URL(`${weatherKitUrl}/attribution/${this.options.language}`);
         return new Request(url);
     }
 
-    async parse(fetchResponse: Response): Promise<Attribution> {
+    async parse({ fetchResponse }: FruitRequestParseOptions<WeatherToken>): Promise<Attribution> {
         const raw = await fetchResponse.text();
         const object = JSON.parse(raw, (key, value) => {
             if (key.startsWith("logo")) {

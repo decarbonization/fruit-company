@@ -12,11 +12,12 @@ iyACJp6xmj6YfE8bOLxHTZGkoC/+yNgf/fBpwf5Nin2pzyM8FUOYXg1R1v2bQqJy
 wHYtSkc1
 -----END PRIVATE KEY-----`;
     describe("MapsToken", () => {
-        describe("#_headers", () => {
-            it("should throw on invalid token", () => {
+        describe("#authenticate", () => {
+            it("should throw on invalid token", async () => {
                 const token = new MapsToken(appId, teamId, keyId, privateKey);
+                const fetchRequest = new Request("http://localhost:3000");
                 expect(token.isValid).toStrictEqual(false);
-                expect(() => token._headers).toThrow();
+                await expect(async () => token.authenticate({ fetchRequest })).rejects.toThrow();
             });
         });
     });

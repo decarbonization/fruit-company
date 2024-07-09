@@ -19,7 +19,7 @@
 
 import { FruitError } from "../core/error";
 import { LocationCoordinates, urlLocationCoordinates } from "../core/models/common";
-import { FruitRequest } from "../core/request";
+import { FruitRequest, FruitRequestParseOptions, FruitRequestPrepareOptions } from "../core/request";
 import { MapsToken } from "./maps-token";
 import { MapErrorResponse, mapKitApiUrl } from "./models";
 import { PlaceResults } from "./models/places";
@@ -28,11 +28,11 @@ class MapsGeocodingRequest<Result> implements FruitRequest<MapsToken, Result> {
     constructor() {
     }
 
-    prepare(_token: MapsToken): Request {
+    prepare({ }: FruitRequestPrepareOptions<MapsToken>): Request {
         throw new Error("Method not implemented.");
     }
 
-    async parse(fetchResponse: Response): Promise<Result> {
+    async parse({ fetchResponse }: FruitRequestParseOptions<MapsToken>): Promise<Result> {
         if (!fetchResponse.ok) {
             const errorResponse = await fetchResponse.json() as MapErrorResponse;
             throw new FruitError(
@@ -57,7 +57,7 @@ export class GeocodeAddress extends MapsGeocodingRequest<PlaceResults> {
         super();
     }
 
-    override prepare(token: MapsToken): Request {
+    override prepare({ }: FruitRequestPrepareOptions<MapsToken>): Request {
         const url = new URL(`${mapKitApiUrl}/geocode`);
         url.searchParams.append("q", this.options.query);
         if (this.options.limitToCountries !== undefined) {
@@ -75,7 +75,7 @@ export class GeocodeAddress extends MapsGeocodingRequest<PlaceResults> {
         if (this.options.userLocation !== undefined) {
             url.searchParams.append("userLocation", urlLocationCoordinates(this.options.userLocation));
         }
-        return new Request(url, { headers: token._headers });
+        return new Request(url);
     }
 
     override toString(): string {
@@ -91,13 +91,13 @@ export class ReverseGeocodeAddress extends MapsGeocodingRequest<PlaceResults> {
         super();
     }
 
-    override prepare(token: MapsToken): Request {
+    override prepare({ }: FruitRequestPrepareOptions<MapsToken>): Request {
         const url = new URL(`${mapKitApiUrl}/reverseGeocode`);
         url.searchParams.append("loc", urlLocationCoordinates(this.options.location));
         if (this.options.language !== undefined) {
             url.searchParams.append("lang", this.options.language);
         }
-        return new Request(url, { headers: token._headers });
+        return new Request(url);
     }
 
     override toString(): string {
