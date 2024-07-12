@@ -39,7 +39,7 @@
     "date-fns": "^3.6.0",
     "jsonwebtoken": "^9.0.2",
     "save-dev": "^0.0.1-security",
-    "serene-front": "^0.0.1"
+    "serene-front": "^0.0.2"
   },
   "engines": {
     "node": ">=20.0",

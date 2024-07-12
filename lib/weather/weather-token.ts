@@ -80,7 +80,7 @@ export class WeatherToken implements SereneAuthority {
         });
     }
 
-    async authenticate({ fetchRequest }: SereneAuthorityAuthenticateOptions): Promise<void> {
+    async authenticate({ fetchRequest }: SereneAuthorityAuthenticateOptions): Promise<Request> {
         if (!this.isValid) {
             throw new AuthorityError(
                 401,
@@ -88,6 +88,8 @@ export class WeatherToken implements SereneAuthority {
                 "Invalid WeatherToken cannot be used to authenticate requests."
             );
         }
-        fetchRequest.headers.set("Authorization", `Bearer ${this.bearerToken}`);
+        const request = new Request(fetchRequest);
+        request.headers.set("Authorization", `Bearer ${this.bearerToken}`);
+        return request;
     }
 }

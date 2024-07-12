@@ -108,7 +108,7 @@ export class MapsToken implements SereneAuthority {
         this.expiresAt = addSeconds(new Date(), tokenResponse.expiresInSeconds);
     }
 
-    async authenticate({ fetchRequest }: SereneAuthorityAuthenticateOptions): Promise<void> {
+    async authenticate({ fetchRequest }: SereneAuthorityAuthenticateOptions): Promise<Request> {
         if (!this.isValid) {
             throw new AuthorityError(
                 401,
@@ -116,6 +116,8 @@ export class MapsToken implements SereneAuthority {
                 "Invalid MapsToken cannot be used to authenticate requests."
             );
         }
-        fetchRequest.headers.set("Authorization", `Bearer ${this.accessToken}`);
+        const request = new Request(fetchRequest);
+        request.headers.set("Authorization", `Bearer ${this.accessToken}`);
+        return request;
     }
 }
