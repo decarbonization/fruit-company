@@ -30,8 +30,8 @@ wHYtSkc1
                     expiresAt: addSeconds(new Date(), 30),
                 });
                 expect(token.isValid).toStrictEqual(true);
-                await token.authenticate({ fetchRequest });
-                expect(fetchRequest.headers.get("Authorization")).toStrictEqual("Bearer test");
+                const request = await token.authenticate({ fetchRequest });
+                expect(request.headers.get("Authorization")).toStrictEqual("Bearer test");
             });
         });
     });
