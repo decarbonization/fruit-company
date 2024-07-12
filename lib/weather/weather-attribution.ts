@@ -17,7 +17,7 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-import { FruitRequest, FruitRequestParseOptions, FruitRequestPrepareOptions } from "../core";
+import { SereneRequest, SereneRequestParseOptions, SereneRequestPrepareOptions } from "serene-front";
 import { Attribution, weatherKitUrl } from "./models";
 import { WeatherToken } from "./weather-token";
 
@@ -25,16 +25,16 @@ export interface WeatherAttributionOptions {
     readonly language: string;
 }
 
-export class WeatherAttribution implements FruitRequest<WeatherToken, Attribution> {
+export class WeatherAttribution implements SereneRequest<WeatherToken, Attribution> {
     constructor(readonly options: WeatherAttributionOptions) {
     }
 
-    prepare({ }: FruitRequestPrepareOptions<WeatherToken>): Request {
+    prepare({ }: SereneRequestPrepareOptions<WeatherToken>): Request {
         const url = new URL(`${weatherKitUrl}/attribution/${this.options.language}`);
         return new Request(url);
     }
 
-    async parse({ fetchResponse }: FruitRequestParseOptions<WeatherToken>): Promise<Attribution> {
+    async parse({ fetchResponse }: SereneRequestParseOptions<WeatherToken>): Promise<Attribution> {
         const raw = await fetchResponse.text();
         const object = JSON.parse(raw, (key, value) => {
             if (key.startsWith("logo")) {

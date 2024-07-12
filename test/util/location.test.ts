@@ -17,9 +17,18 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-export * from "./models";
-export * from "./error";
-export * from "./fetch";
-export * from "./perform";
-export * from "./request";
-export * from "./authority";
+import { describe, expect, it } from "@jest/globals";
+import { LocationCoordinates } from "serene-front/models";
+import { urlLocationCoordinates } from "../../lib/util/location";
+
+describe("util#location module", () => {
+    describe("#urlLocationCoordinates", () => {
+        it("should format coordinates like required by fruit company APIs", () => {
+            const subject: LocationCoordinates = {
+                latitude: 35.689506,
+                longitude: 139.6917,
+            };
+            expect(urlLocationCoordinates(subject)).toStrictEqual("35.689506,139.6917");
+        });
+    });
+});

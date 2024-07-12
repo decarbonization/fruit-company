@@ -19,8 +19,7 @@
 
 import { addSeconds } from "date-fns";
 import jwt, { JwtHeader } from "jsonwebtoken";
-import { FetchAuthorityAuthenticateOptions, FruitAuthority, FruitAuthorityError, FruitAuthorityRefreshOptions } from "../core/authority";
-import { FruitError } from "../core/error";
+import { SereneAuthority, SereneAuthorityAuthenticateOptions, AuthorityError, SereneAuthorityRefreshOptions } from "serene-front";
 import { MapErrorResponse, mapKitApiUrl } from "./models";
 
 /**
@@ -41,7 +40,7 @@ interface TokenResponse {
 /**
  * A token used to interact with weather services.
  */
-export class MapsToken implements FruitAuthority {
+export class MapsToken implements SereneAuthority {
     /**
      * Create a token to interact with weather services.
      * 
@@ -75,10 +74,10 @@ export class MapsToken implements FruitAuthority {
     }
 
     get isValid(): boolean {
-        return (this.accessToken !== "" && new Date() > this.expiresAt);
+        return (this.accessToken !== "" && this.expiresAt >= new Date());
     }
 
-    async refresh({ fetch }: FruitAuthorityRefreshOptions): Promise<void> {
+    async refresh({ fetch }: SereneAuthorityRefreshOptions): Promise<void> {
         const authToken = jwt.sign({
             sub: this.appId,
         }, this.privateKey, {
@@ -98,7 +97,7 @@ export class MapsToken implements FruitAuthority {
         });
         if (!response.ok) {
             const errorResponse = await response.json() as MapErrorResponse;
-            throw new FruitError(
+            throw new AuthorityError(
                 response.status,
                 response.statusText,
                 `${errorResponse.message} (${errorResponse.details.join(', ')})`
@@ -109,9 +108,13 @@ export class MapsToken implements FruitAuthority {
         this.expiresAt = addSeconds(new Date(), tokenResponse.expiresInSeconds);
     }
 
-    async authenticate({ fetchRequest }: FetchAuthorityAuthenticateOptions): Promise<void> {
+    async authenticate({ fetchRequest }: SereneAuthorityAuthenticateOptions): Promise<void> {
         if (!this.isValid) {
-            throw new FruitAuthorityError("Invalid WeatherToken cannot be used to authenticate requests.");
+            throw new AuthorityError(
+                401,
+                "Unauthorized",
+                "Invalid MapsToken cannot be used to authenticate requests."
+            );
         }
         fetchRequest.headers.set("Authorization", `Bearer ${this.accessToken}`);
     }

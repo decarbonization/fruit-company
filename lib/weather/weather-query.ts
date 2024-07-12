@@ -17,9 +17,9 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-import { FruitError } from "../core/error";
-import { LocationCoordinates, urlLocationCoordinates } from "../core/models/common";
-import { FruitRequest, FruitRequestParseOptions, FruitRequestPrepareOptions } from "../core/request";
+import { RESTError, SereneRequest, SereneRequestParseOptions, SereneRequestPrepareOptions } from "serene-front";
+import { LocationCoordinates } from "serene-front/models";
+import { urlLocationCoordinates } from "../util";
 import { weatherKitUrl } from "./models";
 import { Weather, parseWeather } from "./models/weather";
 import { WeatherToken } from "./weather-token";
@@ -53,11 +53,11 @@ export interface WeatherQueryOptions {
     readonly hourlyStart?: Date;
 }
 
-export class WeatherQuery implements FruitRequest<WeatherToken, Weather> {
+export class WeatherQuery implements SereneRequest<WeatherToken, Weather> {
     constructor(readonly options: WeatherQueryOptions) {
     }
 
-    prepare({ }: FruitRequestPrepareOptions<WeatherToken>): Request {
+    prepare({ }: SereneRequestPrepareOptions<WeatherToken>): Request {
         const url = new URL(`${weatherKitUrl}/api/v1/weather/${this.options.language}/${this.options.location.latitude}/${this.options.location.longitude}`);
         for (const [key, value] of Object.entries(this.options)) {
             if (Array.isArray(value)) {
@@ -83,9 +83,13 @@ export class WeatherQuery implements FruitRequest<WeatherToken, Weather> {
         return new Request(url);
     }
 
-    async parse({ fetchResponse }: FruitRequestParseOptions<WeatherToken>): Promise<Weather> {
+    async parse({ fetchResponse }: SereneRequestParseOptions<WeatherToken>): Promise<Weather> {
         if (!fetchResponse.ok) {
-            throw new FruitError(fetchResponse.status, fetchResponse.statusText, `<${fetchResponse.url}>`);
+            throw new RESTError(
+                fetchResponse.status, 
+                fetchResponse.statusText, 
+                `<${fetchResponse.url}>`
+            );
         }
         const raw = await fetchResponse.text();
         return parseWeather(raw);

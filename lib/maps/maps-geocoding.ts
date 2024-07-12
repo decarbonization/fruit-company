@@ -17,25 +17,25 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-import { FruitError } from "../core/error";
-import { LocationCoordinates, urlLocationCoordinates } from "../core/models/common";
-import { FruitRequest, FruitRequestParseOptions, FruitRequestPrepareOptions } from "../core/request";
+import { RESTError, SereneRequest, SereneRequestParseOptions, SereneRequestPrepareOptions } from "serene-front";
+import { LocationCoordinates } from "serene-front/models";
+import { urlLocationCoordinates } from "../util";
 import { MapsToken } from "./maps-token";
 import { MapErrorResponse, mapKitApiUrl } from "./models";
 import { PlaceResults } from "./models/places";
 
-class MapsGeocodingRequest<Result> implements FruitRequest<MapsToken, Result> {
+class MapsGeocodingRequest<Result> implements SereneRequest<MapsToken, Result> {
     constructor() {
     }
 
-    prepare({ }: FruitRequestPrepareOptions<MapsToken>): Request {
+    prepare({ }: SereneRequestPrepareOptions<MapsToken>): Request {
         throw new Error("Method not implemented.");
     }
 
-    async parse({ fetchResponse }: FruitRequestParseOptions<MapsToken>): Promise<Result> {
+    async parse({ fetchResponse }: SereneRequestParseOptions<MapsToken>): Promise<Result> {
         if (!fetchResponse.ok) {
             const errorResponse = await fetchResponse.json() as MapErrorResponse;
-            throw new FruitError(
+            throw new RESTError(
                 fetchResponse.status,
                 fetchResponse.statusText,
                 `${errorResponse.message} (${errorResponse.details.join(', ')})`
@@ -57,7 +57,7 @@ export class GeocodeAddress extends MapsGeocodingRequest<PlaceResults> {
         super();
     }
 
-    override prepare({ }: FruitRequestPrepareOptions<MapsToken>): Request {
+    override prepare({ }: SereneRequestPrepareOptions<MapsToken>): Request {
         const url = new URL(`${mapKitApiUrl}/geocode`);
         url.searchParams.append("q", this.options.query);
         if (this.options.limitToCountries !== undefined) {
@@ -91,7 +91,7 @@ export class ReverseGeocodeAddress extends MapsGeocodingRequest<PlaceResults> {
         super();
     }
 
-    override prepare({ }: FruitRequestPrepareOptions<MapsToken>): Request {
+    override prepare({ }: SereneRequestPrepareOptions<MapsToken>): Request {
         const url = new URL(`${mapKitApiUrl}/reverseGeocode`);
         url.searchParams.append("loc", urlLocationCoordinates(this.options.location));
         if (this.options.language !== undefined) {

@@ -17,6 +17,7 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-export * from "./core";
 export * from "./maps";
+export * from "./util";
 export * from "./weather";
+

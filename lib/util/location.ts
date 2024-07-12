@@ -17,16 +17,15 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-export class FruitError extends Error {
-    constructor(
-        public readonly status: number,
-        public readonly statusText: string,
-        message?: string
-    ) {
-        super(
-            message !== undefined
-                ? `${status} ${statusText}: ${message}`
-                : `${status} ${statusText}`
-        );
-    }
+import { LocationCoordinates } from "serene-front/models";
+
+/**
+ * Convert the given geographic location coordinates into 
+ * a string which is suitable for use as part of a URL.
+ * 
+ * @param location The location to convert.
+ * @returns A representation of the location which can be passed as part of a URL.
+ */
+export function urlLocationCoordinates(location: LocationCoordinates): string {
+    return `${location.latitude},${location.longitude}`;
 }

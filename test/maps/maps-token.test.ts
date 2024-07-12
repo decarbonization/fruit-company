@@ -1,5 +1,6 @@
 import { describe, expect, it } from "@jest/globals";
 import { MapsToken } from "../../lib";
+import { addSeconds } from "date-fns";
 
 describe("maps/maps-token module", () => {
     const appId = "com.fruit-company.maps";
@@ -17,7 +18,20 @@ wHYtSkc1
                 const token = new MapsToken(appId, teamId, keyId, privateKey);
                 const fetchRequest = new Request("http://localhost:3000");
                 expect(token.isValid).toStrictEqual(false);
-                await expect(async () => token.authenticate({ fetchRequest })).rejects.toThrow();
+                await expect(() => token.authenticate({ fetchRequest })).rejects.toThrow();
+            });
+
+            it("should decorate with valid token", async () => {
+                const token = new MapsToken(appId, teamId, keyId, privateKey);
+                const fetchRequest = new Request("http://localhost:3000");
+                expect(token.isValid).toStrictEqual(false);
+                Object.assign(token, {
+                    accessToken: "test",
+                    expiresAt: addSeconds(new Date(), 30),
+                });
+                expect(token.isValid).toStrictEqual(true);
+                await token.authenticate({ fetchRequest });
+                expect(fetchRequest.headers.get("Authorization")).toStrictEqual("Bearer test");
             });
         });
     });

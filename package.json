@@ -1,7 +1,7 @@
 {
   "name": "fruit-company",
   "type": "commonjs",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Apple services library",
   "main": "dist/lib/index.js",
   "types": "dist/lib/index.d.ts",
@@ -38,7 +38,8 @@
     "@types/jsonwebtoken": "^9.0.6",
     "date-fns": "^3.6.0",
     "jsonwebtoken": "^9.0.2",
-    "save-dev": "^0.0.1-security"
+    "save-dev": "^0.0.1-security",
+    "serene-front": "^0.0.1"
   },
   "engines": {
     "node": ">=20.0",

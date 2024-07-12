@@ -17,7 +17,7 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-import { LocationCoordinates } from "../../core/models/common";
+import { LocationCoordinates } from "serene-front/models";
 import { MapRegion, StructuredAddress } from "./base";
 
 /**

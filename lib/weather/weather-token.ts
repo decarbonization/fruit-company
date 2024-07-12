@@ -18,12 +18,12 @@
  */
 
 import jwt, { JwtHeader } from "jsonwebtoken";
-import { FetchAuthorityAuthenticateOptions, FruitAuthority, FruitAuthorityError, FruitAuthorityRefreshOptions } from "../core";
+import { AuthorityError, SereneAuthority, SereneAuthorityAuthenticateOptions, SereneAuthorityRefreshOptions } from "serene-front";
 
 /**
  * A token used to interact with weather services.
  */
-export class WeatherToken implements FruitAuthority {
+export class WeatherToken implements SereneAuthority {
     /**
      * Create a token to interact with weather services.
      * 
@@ -63,10 +63,10 @@ export class WeatherToken implements FruitAuthority {
             return false;
         }
         const expiration = new Date(rawExpiration * 1000);
-        return (new Date() < expiration);
+        return (expiration >= new Date());
     }
 
-    async refresh({ }: FruitAuthorityRefreshOptions): Promise<void> {
+    async refresh({ }: SereneAuthorityRefreshOptions): Promise<void> {
         this.bearerToken = jwt.sign({
             sub: this.appId,
         }, this.privateKey, {
@@ -80,9 +80,13 @@ export class WeatherToken implements FruitAuthority {
         });
     }
 
-    async authenticate({ fetchRequest }: FetchAuthorityAuthenticateOptions): Promise<void> {
+    async authenticate({ fetchRequest }: SereneAuthorityAuthenticateOptions): Promise<void> {
         if (!this.isValid) {
-            throw new FruitAuthorityError("Invalid WeatherToken cannot be used to authenticate requests.");
+            throw new AuthorityError(
+                401,
+                "Unauthorized",
+                "Invalid WeatherToken cannot be used to authenticate requests."
+            );
         }
         fetchRequest.headers.set("Authorization", `Bearer ${this.bearerToken}`);
     }
