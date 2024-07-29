@@ -19,7 +19,8 @@
 
 import { addSeconds } from "date-fns";
 import jwt, { JwtHeader } from "jsonwebtoken";
-import { SereneAuthority, SereneAuthorityAuthenticateOptions, AuthorityError, SereneAuthorityRefreshOptions } from "serene-front";
+import { AuthorityError, SereneAuthority, SereneAuthorityAuthenticateOptions, SereneAuthorityRefreshOptions } from "serene-front";
+import { setRequestHeaders } from "serene-front/urls";
 import { MapErrorResponse, mapKitApiUrl } from "./models";
 
 /**
@@ -116,8 +117,8 @@ export class MapsToken implements SereneAuthority {
                 "Invalid MapsToken cannot be used to authenticate requests."
             );
         }
-        const request = new Request(fetchRequest);
-        request.headers.set("Authorization", `Bearer ${this.accessToken}`);
-        return request;
+        return setRequestHeaders(fetchRequest, [
+            ["Authorization", `Bearer ${this.accessToken}`],
+        ]);
     }
 }

@@ -18,13 +18,12 @@
  */
 
 import { RESTError, SereneRequest, SereneRequestParseOptions, SereneRequestPrepareOptions } from "serene-front";
-import { LocationCoordinates } from "serene-front/models";
-import { urlLocationCoordinates } from "../util";
-import { MapsToken } from "./maps-token";
+import { LocationCoordinates } from "serene-front/data";
+import { MapsToken } from "./token";
 import { MapErrorResponse, mapKitApiUrl } from "./models";
-import { PlaceResults } from "./models/places";
+import { parsePlaceResults, PlaceResults } from "./models/places";
 
-class MapsGeocodingRequest<Result> implements SereneRequest<MapsToken, Result> {
+class MapsGeocodingRequest implements SereneRequest<MapsToken, PlaceResults> {
     constructor() {
     }
 
@@ -32,7 +31,7 @@ class MapsGeocodingRequest<Result> implements SereneRequest<MapsToken, Result> {
         throw new Error("Method not implemented.");
     }
 
-    async parse({ fetchResponse }: SereneRequestParseOptions<MapsToken>): Promise<Result> {
+    async parse({ fetchResponse }: SereneRequestParseOptions<MapsToken>): Promise<PlaceResults> {
         if (!fetchResponse.ok) {
             const errorResponse = await fetchResponse.json() as MapErrorResponse;
             throw new RESTError(
@@ -41,11 +40,12 @@ class MapsGeocodingRequest<Result> implements SereneRequest<MapsToken, Result> {
                 `${errorResponse.message} (${errorResponse.details.join(', ')})`
             );
         }
-        return await fetchResponse.json() as Result;
+        const json = await fetchResponse.text();
+        return parsePlaceResults(json);
     }
 }
 
-export class GeocodeAddress extends MapsGeocodingRequest<PlaceResults> {
+export class GeocodeAddress extends MapsGeocodingRequest {
     constructor(readonly options: Readonly<{
         query: string,
         limitToCountries?: string[],
@@ -67,13 +67,13 @@ export class GeocodeAddress extends MapsGeocodingRequest<PlaceResults> {
             url.searchParams.append("lang", this.options.language);
         }
         if (this.options.searchLocation !== undefined) {
-            url.searchParams.append("searchLocation", urlLocationCoordinates(this.options.searchLocation));
+            url.searchParams.append("searchLocation", this.options.searchLocation.urlPair);
         }
         if (this.options.searchRegion !== undefined) {
-            url.searchParams.append("searchRegion", urlLocationCoordinates(this.options.searchRegion));
+            url.searchParams.append("searchRegion", this.options.searchRegion.urlPair);
         }
         if (this.options.userLocation !== undefined) {
-            url.searchParams.append("userLocation", urlLocationCoordinates(this.options.userLocation));
+            url.searchParams.append("userLocation", this.options.userLocation.urlPair);
         }
         return new Request(url);
     }
@@ -83,7 +83,7 @@ export class GeocodeAddress extends MapsGeocodingRequest<PlaceResults> {
     }
 }
 
-export class ReverseGeocodeAddress extends MapsGeocodingRequest<PlaceResults> {
+export class ReverseGeocodeAddress extends MapsGeocodingRequest {
     constructor(readonly options: Readonly<{
         location: LocationCoordinates,
         language?: string,
@@ -93,7 +93,7 @@ export class ReverseGeocodeAddress extends MapsGeocodingRequest<PlaceResults> {
 
     override prepare({ }: SereneRequestPrepareOptions<MapsToken>): Request {
         const url = new URL(`${mapKitApiUrl}/reverseGeocode`);
-        url.searchParams.append("loc", urlLocationCoordinates(this.options.location));
+        url.searchParams.append("loc", this.options.location.urlPair);
         if (this.options.language !== undefined) {
             url.searchParams.append("lang", this.options.language);
         }

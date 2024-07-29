@@ -1,6 +1,6 @@
 import { describe, expect, it } from "@jest/globals";
-import { MapsToken } from "../../lib";
 import { addSeconds } from "date-fns";
+import { MapsToken } from "../../lib/maps";
 
 describe("maps/maps-token module", () => {
     const appId = "com.fruit-company.maps";

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "@jest/globals";
-import { WeatherToken } from "../../lib";
+import { WeatherToken } from "../../lib/weather";
 
 describe("weather/weather-token module", () => {
     const appId = "com.fruit-company.weather";

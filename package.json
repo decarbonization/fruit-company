@@ -5,6 +5,20 @@
   "description": "Apple services library",
   "main": "dist/lib/index.js",
   "types": "dist/lib/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/lib/index.d.ts",
+      "default": "./dist/lib/index.js"
+    },
+    "./maps": {
+      "types": "./dist/lib/maps/index.d.ts",
+      "default": "./dist/lib/maps/index.js"
+    },
+    "./weather": {
+      "types": "./dist/lib/weather/index.d.ts",
+      "default": "./dist/lib/weather/index.js"
+    }
+  },
   "files": [
     "dist/lib"
   ],
@@ -41,7 +55,7 @@
     "date-fns": "^3.6.0",
     "jsonwebtoken": "^9.0.2",
     "save-dev": "^0.0.1-security",
-    "serene-front": "^0.0.5"
+    "serene-front": "^0.1.1"
   },
   "engines": {
     "node": ">=20.0",

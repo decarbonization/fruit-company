@@ -19,6 +19,7 @@
 
 import jwt, { JwtHeader } from "jsonwebtoken";
 import { AuthorityError, SereneAuthority, SereneAuthorityAuthenticateOptions, SereneAuthorityRefreshOptions } from "serene-front";
+import { setRequestHeaders } from "serene-front/urls";
 
 /**
  * A token used to interact with weather services.
@@ -88,8 +89,8 @@ export class WeatherToken implements SereneAuthority {
                 "Invalid WeatherToken cannot be used to authenticate requests."
             );
         }
-        const request = new Request(fetchRequest);
-        request.headers.set("Authorization", `Bearer ${this.bearerToken}`);
-        return request;
+        return setRequestHeaders(fetchRequest, [
+            ["Authorization", `Bearer ${this.bearerToken}`],
+        ]);
     }
 }

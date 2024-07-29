@@ -17,15 +17,27 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-import { LocationCoordinates } from "serene-front/models";
+import { describe, expect, it } from "@jest/globals";
+import { LocationCoordinates } from "serene-front/data";
+import { parsePlaceResults } from "../../../lib/maps";
 
-/**
- * Convert the given geographic location coordinates into 
- * a string which is suitable for use as part of a URL.
- * 
- * @param location The location to convert.
- * @returns A representation of the location which can be passed as part of a URL.
- */
-export function urlLocationCoordinates(location: LocationCoordinates): string {
-    return `${location.latitude},${location.longitude}`;
-}
+describe("maps#models#places module", () => {
+    describe("#parsePlaceResults", () => {
+        const rawSubject = `{
+            "results": [
+                {
+                    "coordinate": {
+                        "latitude": 35.6,
+                        "longitude": 139.6
+                    }
+                }
+            ]
+        }`;
+
+        it("should parse location objects", () => {
+            const subject = parsePlaceResults(rawSubject);
+            const onlyPlace = subject.results[0];
+            expect(onlyPlace.coordinate instanceof LocationCoordinates).toStrictEqual(true);
+        });
+    });
+});

@@ -17,7 +17,7 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-import { LocationCoordinates } from "serene-front/models";
+import { LocationCoordinates } from "serene-front/data";
 import { MapRegion, StructuredAddress } from "./base";
 
 /**
@@ -72,3 +72,22 @@ export interface PlaceResults {
      */
     readonly results: Place[];
 }
+
+
+/**
+ * Create a `PlaceResults` object from a given JSON representation.
+ * 
+ * @param raw A string containing a JSON representation of a `PlaceResults` object.
+ * @returns A parsed `PlaceResults` object ready for use.
+ */
+export function parsePlaceResults(json: string): PlaceResults {
+    const object = JSON.parse(json, (key, value) => {
+        if (key === "coordinate") {
+            return LocationCoordinates.revive(value);
+        } else {
+            return value;
+        }
+    });
+    return object as PlaceResults;
+}
+

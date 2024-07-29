@@ -18,11 +18,10 @@
  */
 
 import { RESTError, SereneRequest, SereneRequestParseOptions, SereneRequestPrepareOptions } from "serene-front";
-import { LocationCoordinates } from "serene-front/models";
-import { urlLocationCoordinates } from "../util";
-import { weatherKitUrl } from "./models";
+import { LocationCoordinates } from "serene-front/data";
+import { Attribution, weatherKitUrl } from "./models";
 import { Weather, parseWeather } from "./models/weather";
-import { WeatherToken } from "./weather-token";
+import { WeatherToken } from "./token";
 
 export const enum WeatherDataSet {
     currentWeather = "currentWeather",
@@ -60,7 +59,10 @@ export class WeatherQuery implements SereneRequest<WeatherToken, Weather> {
     prepare({ }: SereneRequestPrepareOptions<WeatherToken>): Request {
         const url = new URL(`${weatherKitUrl}/api/v1/weather/${this.options.language}/${this.options.location.latitude}/${this.options.location.longitude}`);
         for (const [key, value] of Object.entries(this.options)) {
-            if (Array.isArray(value)) {
+            if (key === "location" || key === "language") {
+                // Skip, part of the path.
+                continue;
+            } else if (Array.isArray(value)) {
                 url.searchParams.append(key, value.join(","));
             } else if (value instanceof Date) {
                 url.searchParams.append(key, value.toISOString());
@@ -68,8 +70,6 @@ export class WeatherQuery implements SereneRequest<WeatherToken, Weather> {
                 url.searchParams.append(key, String(value));
             } else if (typeof value === "string") {
                 url.searchParams.append(key, value);
-            } else if (key === "location" && typeof value === "object") {
-                url.searchParams.append(key, urlLocationCoordinates(value as LocationCoordinates));
             } else {
                 throw new Error(`GetWeatherOptions.${key} invalid <${value}>`);
             }
@@ -86,8 +86,8 @@ export class WeatherQuery implements SereneRequest<WeatherToken, Weather> {
     async parse({ fetchResponse }: SereneRequestParseOptions<WeatherToken>): Promise<Weather> {
         if (!fetchResponse.ok) {
             throw new RESTError(
-                fetchResponse.status, 
-                fetchResponse.statusText, 
+                fetchResponse.status,
+                fetchResponse.statusText,
                 `<${fetchResponse.url}>`
             );
         }
@@ -99,3 +99,34 @@ export class WeatherQuery implements SereneRequest<WeatherToken, Weather> {
         return `WeatherQuery(${JSON.stringify(this.options)})`;
     }
 }
+
+export interface WeatherAttributionOptions {
+    readonly language: string;
+}
+
+export class WeatherAttribution implements SereneRequest<WeatherToken, Attribution> {
+    constructor(readonly options: WeatherAttributionOptions) {
+    }
+
+    prepare({ }: SereneRequestPrepareOptions<WeatherToken>): Request {
+        const url = new URL(`${weatherKitUrl}/attribution/${this.options.language}`);
+        return new Request(url);
+    }
+
+    async parse({ fetchResponse }: SereneRequestParseOptions<WeatherToken>): Promise<Attribution> {
+        const raw = await fetchResponse.text();
+        const object = JSON.parse(raw, (key, value) => {
+            if (key.startsWith("logo")) {
+                return `${weatherKitUrl}${value}`;
+            } else {
+                return value;
+            }
+        });
+        return object as Attribution;
+    }
+
+    toString(): string {
+        return `WeatherAttribution(${JSON.stringify(this.options)})`;
+    }
+}
+
