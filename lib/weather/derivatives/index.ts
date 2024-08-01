@@ -18,5 +18,6 @@
  */
 
 export * from "./chance";
+export * from "./comfort";
 export * from "./intensity";
 export * from "./risk";

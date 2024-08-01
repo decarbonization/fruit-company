@@ -5,11 +5,10 @@ describe("weather#derivatives#intensity module", () => {
     describe("#precipitationIntensityFrom", () => {
         it("should reject invalid values", () => {
             expect(() => precipitationIntensityFrom(-1.0)).toThrow();
-            expect(() => precipitationIntensityFrom(0.0)).toThrow();
         });
 
         it("should detect light values", () => {
-            expect(precipitationIntensityFrom(0.1)).toStrictEqual(Intensity.light);
+            expect(precipitationIntensityFrom(0.0)).toStrictEqual(Intensity.light);
             expect(precipitationIntensityFrom(2.5)).toStrictEqual(Intensity.light);
         });
 

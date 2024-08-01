@@ -50,7 +50,7 @@ export const enum Intensity {
  * @throws A `RangeError` if `rateMMpH <= 0.0`.
  */
 export function precipitationIntensityFrom(rateMMpH: number): Intensity {
-    if (rateMMpH <= 0.0) {
+    if (rateMMpH < 0.0) {
         throw new RangeError(`<${rateMMpH}> is not a valid rain precipitation intensity value`);
     } else if (rateMMpH <= 2.5) {
         return Intensity.light;
