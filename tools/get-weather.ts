@@ -18,11 +18,11 @@
  */
 
 import { program } from "commander";
+import { addDays, addHours } from "date-fns";
 import * as fs from "fs/promises";
+import { fulfill, noLogger, verboseConsoleLogger } from "serene-front";
 import { LocationCoordinates } from "serene-front/data";
 import { allWeatherDataSets, WeatherQuery, WeatherToken } from "../lib/weather";
-import { fulfill, noLogger, verboseConsoleLogger } from "serene-front";
-import { addDays, addHours } from "date-fns";
 
 program
     .name("get-weather")
