@@ -121,4 +121,11 @@ export class MapsToken implements SereneAuthority {
             ["Authorization", `Bearer ${this.accessToken}`],
         ]);
     }
+
+    /**
+     * @ignore
+     */
+    toString(): string {
+        return `MapsToken(isValid: ${this.isValid}, expiresAt: ${this.expiresAt})`;
+    }
 }

@@ -93,4 +93,11 @@ export class WeatherToken implements SereneAuthority {
             ["Authorization", `Bearer ${this.bearerToken}`],
         ]);
     }
+
+    /**
+     * @ignore
+     */
+    toString(): string {
+        return `WeatherToken(isValid: ${this.isValid})`;
+    }
 }
