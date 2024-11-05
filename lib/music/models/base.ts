@@ -232,3 +232,63 @@ export interface MusicPreview {
      */
     readonly hlsUrl?: string;
 }
+
+/**
+ * The Source object represents the source of an error.
+ */
+export interface MusicErrorSource {
+    /**
+     * The URI query parameter that caused the error.
+     */
+    readonly parameter?: string;
+
+    /**
+     * A pointer to the associated entry in the request document.
+     */
+    readonly pointer?: string;
+}
+
+/**
+ * Information about an error that occurred while processing a request.
+ */
+export interface MusicError {
+    /**
+     * The code for this error. For possible values, see HTTP Status Codes.
+     */
+    readonly code: string;
+    
+    /**
+     * A long, possibly localized, description of the problem.
+     */
+    readonly detail?: string;
+    
+    /**
+     * A unique identifier for this occurrence of the error.
+     */
+    readonly id: string;
+    
+    /**
+     * An object containing references to the source of the error. For possible members, see Source object.
+     */
+    readonly source?: MusicErrorSource;
+    
+    /**
+     * The HTTP status code for this problem.
+     */
+    readonly status: string;
+    
+    /**
+     * A short, possibly localized, description of the problem.
+     */
+    readonly title: string;
+}
+
+/**
+ * A response object indicating that an error occurred while processing the request.
+ */
+export interface MusicErrorsResponse {
+    /**
+     * The collection of errors that occurred while processing the request.
+     */
+    readonly errors: MusicError[];
+}
