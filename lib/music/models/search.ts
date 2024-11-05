@@ -17,13 +17,13 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-import { MusicResource } from "./base";
+import { UnknownMusicResource } from "./base";
 import { SongResource } from "./song";
 
 /**
  * An object containing search results for a specific resource.
  */
-export interface ResourceSearchResult<Datum extends MusicResource<object, object>> {
+export interface ResourceSearchResult<Datum extends UnknownMusicResource> {
     /**
      * The resources for the search result.
      */
@@ -48,42 +48,42 @@ export interface MusicSearchResults {
     /**
      * The activities results for a term search for specific resource types.
      */
-    readonly activities?: ResourceSearchResult<MusicResource<object, object>>;
+    readonly activities?: ResourceSearchResult<UnknownMusicResource>;
 
     /**
      * The albums results for a term search for specific resource types.
      */
-    readonly albums?: ResourceSearchResult<MusicResource<object, object>>;
+    readonly albums?: ResourceSearchResult<UnknownMusicResource>;
 
     /**
      * The Apple curators results for a term search for specific resource types.
      */
-    readonly "apple-curators"?: ResourceSearchResult<MusicResource<object, object>>;
+    readonly "apple-curators"?: ResourceSearchResult<UnknownMusicResource>;
 
     /**
      * The artists results for a term search for specific resource types.
      */
-    readonly artists?: ResourceSearchResult<MusicResource<object, object>>;
+    readonly artists?: ResourceSearchResult<UnknownMusicResource>;
 
     /**
      * The curators results for a term search for specific resource types.
      */
-    readonly curators?: ResourceSearchResult<MusicResource<object, object>>;
+    readonly curators?: ResourceSearchResult<UnknownMusicResource>;
 
     /**
      * The music videos results for a term search for specific resource types.
      */
-    readonly "music-videos"?: ResourceSearchResult<MusicResource<object, object>>;
+    readonly "music-videos"?: ResourceSearchResult<UnknownMusicResource>;
 
     /**
      * The playlists results for a term search for specific resource types.
      */
-    readonly playlists?: ResourceSearchResult<MusicResource<object, object>>;
+    readonly playlists?: ResourceSearchResult<UnknownMusicResource>;
 
     /**
      * The record labels results for a term search for specific resource types.
      */
-    readonly "record-labels"?: ResourceSearchResult<MusicResource<object, object>>;
+    readonly "record-labels"?: ResourceSearchResult<UnknownMusicResource>;
 
     /**
      * The songs results for a term search for specific resource types.
@@ -93,12 +93,12 @@ export interface MusicSearchResults {
     /**
      * The stations results for a term search for specific resource types.
      */
-    readonly stations?: ResourceSearchResult<MusicResource<object, object>>;
+    readonly stations?: ResourceSearchResult<UnknownMusicResource>;
 
     /**
      * The top results for a term search for specific resource types.
      */
-    readonly top?: ResourceSearchResult<MusicResource<object, object>>;
+    readonly top?: ResourceSearchResult<UnknownMusicResource>;
 }
 
 /**

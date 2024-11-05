@@ -19,8 +19,7 @@
 
 import { RESTError, SereneRequest, SereneRequestParseOptions, SereneRequestPrepareOptions } from "serene-front";
 import { MusicDeveloperToken } from "./token";
-
-const appleMusicBaseUrl = "https://api.music.apple.com/v1";
+import { appleMusicBaseUrl, MusicSearchResults } from "./models";
 
 export type MusicCatalogType =
     | 'activities'
@@ -47,7 +46,7 @@ export interface SearchMusicCatalogOptions {
     readonly with?: MusicCatalogSearchModification[];
 }
 
-export class SearchMusicCatalog implements SereneRequest<MusicDeveloperToken, any> {
+export class SearchMusicCatalog implements SereneRequest<MusicDeveloperToken, MusicSearchResults> {
     constructor(private readonly options: SearchMusicCatalogOptions) { }
 
     prepare({ }: SereneRequestPrepareOptions<MusicDeveloperToken>): Request {

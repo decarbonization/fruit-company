@@ -17,12 +17,12 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-import { MusicArtwork, MusicEditorialNotes, MusicPlayParameters, MusicPreview, MusicRelationship, MusicResource } from "./base";
+import { MusicArtwork, MusicEditorialNotes, MusicPlayParameters, MusicPreview, MusicRelationship, MusicResource, UnknownMusicResource } from "./base";
 
 /**
  * A specific audio variant for a song.
  */
-export type AudioVariant =
+export type SongAudioVariant =
     | 'dolby-atmos'
     | 'dolby-audio'
     | 'hi-res-lossless'
@@ -32,7 +32,7 @@ export type AudioVariant =
 /**
  * A Recording Industry Association of America (RIAA) rating.
  */
-export type ContentRating =
+export type SongContentRating =
     | 'clean'
     | 'explicit';
 
@@ -68,7 +68,7 @@ export interface SongAttributes {
     /**
      * (Extended) Indicates the specific audio variant for a song.
      */
-    readonly audioVariants?: AudioVariant[];
+    readonly audioVariants?: SongAudioVariant[];
 
     /**
      * The song’s composer.
@@ -179,43 +179,43 @@ export interface SongRelationships {
      * 
      * Fetch limits: 10 default, 10 maximum
      */
-    readonly albums: MusicRelationship<MusicResource<object, object>>;
+    readonly albums: MusicRelationship<UnknownMusicResource>;
 
     /**
      * The artists associated with the song. By default, artists includes identifiers only.
      *
      * Fetch limits: 10 default, 10 maximum
      */
-    readonly artists: MusicRelationship<MusicResource<object, object>>;
+    readonly artists: MusicRelationship<UnknownMusicResource>;
 
     /**
      * The composers for a catalog song.
      */
-    readonly composers: MusicRelationship<MusicResource<object, object>>;
+    readonly composers: MusicRelationship<UnknownMusicResource>;
 
     /**
      * The genres associated with the song. By default, genres is not included.
      * 
      * Fetch limits: None
      */
-    readonly genres: MusicRelationship<MusicResource<object, object>>;
+    readonly genres: MusicRelationship<UnknownMusicResource>;
 
     /**
      * Library song for a catalog song if added to library.
      */
-    readonly library: MusicRelationship<MusicResource<object, object>>;
+    readonly library: MusicRelationship<UnknownMusicResource>;
 
     /**
      * Music videos for a catalog song.
      */
-    readonly "music-videos": MusicRelationship<MusicResource<object, object>>;
+    readonly "music-videos": MusicRelationship<UnknownMusicResource>;
 
     /**
      * The station associated with the song. By default, station is not included.
      *
      * Fetch limits: None
      */
-    readonly station: MusicRelationship<MusicResource<object, object>>;
+    readonly station: MusicRelationship<UnknownMusicResource>;
 }
 
 /**

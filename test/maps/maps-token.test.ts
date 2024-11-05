@@ -2,7 +2,7 @@ import { describe, expect, it } from "@jest/globals";
 import { addSeconds } from "date-fns";
 import { MapsToken } from "../../lib/maps";
 
-describe("maps/maps-token module", () => {
+describe("maps/token module", () => {
     const appId = "com.fruit-company.maps";
     const teamId = "fruit-company team";
     const keyId = "8675309";

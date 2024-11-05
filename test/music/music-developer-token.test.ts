@@ -1,8 +1,8 @@
 import { describe, expect, it } from "@jest/globals";
-import { WeatherToken } from "../../lib/weather";
+import { MusicDeveloperToken } from "../../lib/music";
 
-describe("weather/token module", () => {
-    const appId = "com.fruit-company.weather";
+describe("music/token module", () => {
+    const appId = "com.fruit-company.music";
     const teamId = "fruit-company team";
     const keyId = "8675309";
     const privateKey = `-----BEGIN PRIVATE KEY-----
@@ -11,17 +11,17 @@ wsvLeJVu3bxCLL/SURQvMZw6QumgCgYIKoZIzj0DAQehRANCAARuwGOLtHY99zLl
 iyACJp6xmj6YfE8bOLxHTZGkoC/+yNgf/fBpwf5Nin2pzyM8FUOYXg1R1v2bQqJy
 wHYtSkc1
 -----END PRIVATE KEY-----`;
-    describe("WeatherToken", () => {
+    describe("MusicDeveloperToken", () => {
         describe("#isValid", () => {
             it("should be invalid before calling refresh", async () => {
-                const token = new WeatherToken(appId, teamId, keyId, privateKey);
+                const token = new MusicDeveloperToken(appId, teamId, keyId, privateKey);
                 expect(token.isValid).toStrictEqual(false);
                 await token.refresh({ fetch: globalThis.fetch });
                 expect(token.isValid).toStrictEqual(true);
             });
 
             it("should be invalid with expired token", async () => {
-                const token = new WeatherToken(appId, teamId, keyId, privateKey);
+                const token = new MusicDeveloperToken(appId, teamId, keyId, privateKey);
 
                 await token.refresh({ fetch: globalThis.fetch });
                 expect(token.isValid).toStrictEqual(true);
@@ -38,7 +38,7 @@ wHYtSkc1
 
         describe("#authenticate", () => {
             it("should throw on invalid token", async () => {
-                const token = new WeatherToken(appId, teamId, keyId, privateKey);
+                const token = new MusicDeveloperToken(appId, teamId, keyId, privateKey);
                 const fetchRequest = new Request("http://localhost:3000");
                 expect(token.isValid).toStrictEqual(false);
                 await expect(async () => await token.authenticate({ fetchRequest })).rejects.toThrow();

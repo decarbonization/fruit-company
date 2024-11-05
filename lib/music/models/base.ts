@@ -18,6 +18,11 @@
  */
 
 /**
+ * A string containing the URL of the Apple Music API services.
+ */
+export const appleMusicBaseUrl = "https://api.music.apple.com/v1";
+
+/**
  * A resource object.
  */
 export interface MusicResource<
@@ -61,6 +66,11 @@ export interface MusicResource<
      */
     readonly views?: Views;
 }
+
+/**
+ * A resource object for which a type definition does not yet exist.
+ */
+export type UnknownMusicResource = MusicResource<object, object>;
 
 /**
  * A response object for the request.
