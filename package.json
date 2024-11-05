@@ -14,6 +14,10 @@
       "types": "./dist/lib/maps/index.d.ts",
       "default": "./dist/lib/maps/index.js"
     },
+    "./music": {
+      "types": "./dist/lib/music/index.d.ts",
+      "default": "./dist/lib/music/index.js"
+    },
     "./weather": {
       "types": "./dist/lib/weather/index.d.ts",
       "default": "./dist/lib/weather/index.js"
