@@ -58,7 +58,9 @@
   "dependencies": {
     "@types/jsonwebtoken": "^9.0.6",
     "date-fns": "^3.6.0",
-    "jsonwebtoken": "^9.0.2",
+    "jsonwebtoken": "^9.0.2"
+  },
+  "peerDependencies": {
     "serene-front": "0.2.1"
   },
   "engines": {
