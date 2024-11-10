@@ -17,7 +17,7 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-import jwt, { JwtHeader } from "jsonwebtoken";
+import jwt from "jsonwebtoken";
 import { AuthorityError, SereneAuthority, SereneAuthorityAuthenticateOptions, SereneAuthorityRefreshOptions } from "serene-front";
 import { setRequestHeaders } from "serene-front/urls";
 
@@ -75,9 +75,6 @@ export class MusicDeveloperToken implements SereneAuthority {
             expiresIn: "24h",
             keyid: this.keyId,
             algorithm: "ES256",
-            header: {
-                id: `${this.teamId}.${this.appId}`,
-            } as unknown as JwtHeader,
         });
     }
 
