@@ -20,27 +20,11 @@
 /**
  * The subjective comfort of a measurement.
  */
-export const enum Comfort {
-    /**
-     * Indicates that a measurement is uncomfortably low.
-     */
-    tooLow = "tooLow",
-    
-    /**
-     * Indicates that a measurement is fairly comfortable
-     */
-    fair = "fair",
-
-    /**
-     * Indicates that a measurement is comfortable.
-     */
-    good = "good",
-    
-    /**
-     * Indicates that a measurement is uncomfortably high.
-     */
-    tooHigh = "tooHigh",
-}
+export type Comfort =
+    | "tooLow"
+    | "fair"
+    | "good"
+    | "tooHigh";
 
 /**
  * Determine the subjective comfort of a given relative humidity measurement.
@@ -50,15 +34,15 @@ export const enum Comfort {
  */
 export function humidityComfortFrom(humidity: number): Comfort {
     if (humidity >= 0.0 && humidity <= 0.2) {
-        return Comfort.tooLow;
+        return "tooLow";
     } else if (humidity > 0.2 && humidity <= 0.3) {
-        return Comfort.fair;
+        return "fair";
     } else if (humidity > 0.3 && humidity <= 0.6) {
-        return Comfort.good;
+        return "good";
     } else if (humidity > 0.6 && humidity <= 0.7) {
-        return Comfort.fair;
+        return "fair";
     } else if (humidity > 0.7 && humidity <= 1.0) {
-        return Comfort.tooHigh;
+        return "tooHigh";
     } else {
         throw new RangeError(`<${humidity}> is not a valid humidity`);
     }

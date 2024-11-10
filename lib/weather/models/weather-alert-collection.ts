@@ -119,139 +119,43 @@ export interface WeatherAlertSummary {
 /**
  * How likely the event is to occur.
  */
-export const enum WeatherAlertCertainty {
-    /**
-     * The event has already occurred or is ongoing.
-     */
-    observed = "observed",
-
-    /**
-     * The event is likely to occur (greater than 50% probability).
-     */
-    likely = "likely",
-
-    /**
-     * The event is unlikley to occur (less than 50% probability).
-     */
-    possible = "possible",
-
-    /**
-     * The event is not expected to occur (approximately 0% probability).
-     */
-    unlikely = "unlikely",
-
-    /**
-     * It is unknown if the event will occur.
-     */
-    unknown = "unknown",
-}
+export type WeatherAlertCertainty =
+    | "observed"
+    | "likely"
+    | "possible"
+    | "unlikely"
+    | "unknown";
 
 /**
  * An indication of urgency of action from the reporting agency.
  */
-export const enum WeatherAlertUrgency {
-    /**
-     * Take responsive action immediately.
-     */
-    immediate = "immediate",
-
-    /**
-     * Take responsive action in the next hour.
-     */
-    expected = "expected",
-
-    /**
-     * Take responsive action in the near future.
-     */
-    future = "future",
-
-    /**
-     * Responsive action is no longer required.
-     */
-    past = "past",
-
-    /**
-     * The urgency is unknown.
-     */
-    unknown = "unknown",
-}
+export type WeatherAlertUrgency =
+    | "immediate"
+    | "expected"
+    | "future"
+    | "past"
+    | "unknown";
 
 /**
  * The level of danger to life and property.
  */
-export const enum WeatherAlertSeverity {
-    /**
-     * Extraordinary threat.
-     */
-    extreme = "extreme",
-
-    /**
-     * Significant threat.
-     */
-    severe = "severe",
-
-    /**
-     * Possible threat.
-     */
-    moderate = "moderate",
-
-    /**
-     * Minimal or no known threat.
-     */
-    minor = "minor",
-
-    /**
-     * Unknown threat.
-     */
-    unknown = "unknown",
-}
+export type WeatherAlertSeverity =
+    | "extreme"
+    | "severe"
+    | "moderate"
+    | "minor"
+    | "unknown";
 
 /**
  * The recommended action from a reporting agency.
  */
-export const enum WeatherAlertResponseType {
-    /**
-     * Take shelter in place.
-     */
-    shelter = "shelter",
-
-    /**
-     * Relocate.
-     */
-    evacuate = "evacuate",
-
-    /**
-     * Make preparations.
-     */
-    prepare = "prepare",
-
-    /**
-     * Execute a pre-planned activity.
-     */
-    execute = "execute",
-
-    /**
-     * Avoid the event.
-     */
-    avoid = "avoid",
-
-    /**
-     * Monitor the situation.
-     */
-    monitor = "monitor",
-
-    /**
-     * Assess the situation.
-     */
-    assess = "assess",
-
-    /**
-     * The event no longer poses a threat.
-     */
-    allClear = "allClear",
-
-    /**
-     * No action recommended.
-     */
-    none = "none",
-}
+export type WeatherAlertResponseType =
+    | "shelter"
+    | "evacuate"
+    | "prepare"
+    | "execute"
+    | "avoid"
+    | "monitor"
+    | "assess"
+    | "allClear"
+    | "none";

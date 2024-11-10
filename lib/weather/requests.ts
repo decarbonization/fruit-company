@@ -23,20 +23,19 @@ import { Attribution, weatherKitUrl } from "./models";
 import { Weather, parseWeather } from "./models/weather";
 import { WeatherToken } from "./token";
 
-export const enum WeatherDataSet {
-    currentWeather = "currentWeather",
-    forecastDaily = "forecastDaily",
-    forecastHourly = "forecastHourly",
-    forecastNextHour = "forecastNextHour",
-    weatherAlerts = "weatherAlerts",
-}
+export type WeatherDataSet =
+    | "currentWeather"
+    | "forecastDaily"
+    | "forecastHourly"
+    | "forecastNextHour"
+    | "weatherAlerts";
 
-export const allWeatherDataSets = Object.freeze([
-    WeatherDataSet.currentWeather,
-    WeatherDataSet.forecastDaily,
-    WeatherDataSet.forecastHourly,
-    WeatherDataSet.forecastNextHour,
-    WeatherDataSet.weatherAlerts,
+export const allWeatherDataSets = Object.freeze<WeatherDataSet[]>([
+    'currentWeather',
+    'forecastDaily',
+    'forecastHourly',
+    'forecastNextHour',
+    'weatherAlerts',
 ]);
 
 export interface WeatherQueryOptions {

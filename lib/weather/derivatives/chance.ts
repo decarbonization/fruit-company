@@ -20,32 +20,12 @@
 /**
  * The chance of a probability measurement leading to an event, such as rain.
  */
-export const enum Chance {
-    /**
-     * Indicates that there is no chance of an event occurring.
-     */
-    none = "none",
-
-    /**
-     * Indicates that it is unlikely that an event will occurr.
-     */
-    slight = "slight",
-
-    /**
-     * Indicates that it is possible for an event to occur.
-     */
-    possible = "possible",
-
-    /**
-     * Indicates that it is highly likely an event will occur.
-     */
-    likely = "likely",
-
-    /**
-     * Indicates that it is certain an event will occur.
-     */
-    certain = "certain",
-}
+export type Chance =
+    | "none"
+    | "slight"
+    | "possible"
+    | "likely"
+    | "certain";
 
 /**
  * Determine the chance of a given probability value.
@@ -55,15 +35,15 @@ export const enum Chance {
  */
 export function probabilityChanceFrom(p: number): Chance {
     if (p === 0.0) {
-        return Chance.none;
+        return "none";
     } else if (p > 0.0 && p <= 0.2) {
-        return Chance.slight;
+        return "slight";
     } else if (p > 0.2 && p <= 0.8) {
-        return Chance.possible;
+        return "possible";
     } else if (p > 0.8 && p < 1.0) {
-        return Chance.likely;
+        return "likely";
     } else if (p === 1.0) {
-        return Chance.certain;
+        return "certain";
     } else {
         throw new RangeError(`<${p}> is not a valid probability`);
     }

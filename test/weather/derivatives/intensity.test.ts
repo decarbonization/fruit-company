@@ -1,5 +1,5 @@
 import { describe, expect, it } from "@jest/globals";
-import { Intensity, precipitationIntensityFrom } from "../../../lib/weather";
+import { precipitationIntensityFrom } from "../../../lib/weather";
 
 describe("weather#derivatives#intensity module", () => {
     describe("#precipitationIntensityFrom", () => {
@@ -8,23 +8,23 @@ describe("weather#derivatives#intensity module", () => {
         });
 
         it("should detect light values", () => {
-            expect(precipitationIntensityFrom(0.0)).toStrictEqual(Intensity.light);
-            expect(precipitationIntensityFrom(2.5)).toStrictEqual(Intensity.light);
+            expect(precipitationIntensityFrom(0.0)).toStrictEqual("light");
+            expect(precipitationIntensityFrom(2.5)).toStrictEqual("light");
         });
 
         it("should detect moderate values", () => {
-            expect(precipitationIntensityFrom(2.6)).toStrictEqual(Intensity.moderate);
-            expect(precipitationIntensityFrom(7.5)).toStrictEqual(Intensity.moderate);
+            expect(precipitationIntensityFrom(2.6)).toStrictEqual("moderate");
+            expect(precipitationIntensityFrom(7.5)).toStrictEqual("moderate");
         });
 
         it("should detect moderate values", () => {
-            expect(precipitationIntensityFrom(7.6)).toStrictEqual(Intensity.heavy);
-            expect(precipitationIntensityFrom(50.0)).toStrictEqual(Intensity.heavy);
+            expect(precipitationIntensityFrom(7.6)).toStrictEqual("heavy");
+            expect(precipitationIntensityFrom(50.0)).toStrictEqual("heavy");
         });
 
         it("should detect violent values", () => {
-            expect(precipitationIntensityFrom(51.0)).toStrictEqual(Intensity.violent);
-            expect(precipitationIntensityFrom(Number.MAX_VALUE)).toStrictEqual(Intensity.violent);
+            expect(precipitationIntensityFrom(51.0)).toStrictEqual("violent");
+            expect(precipitationIntensityFrom(Number.MAX_VALUE)).toStrictEqual("violent");
         });
     });
 });

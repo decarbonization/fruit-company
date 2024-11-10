@@ -20,27 +20,11 @@
 /**
  * The intensity category of a measurement such as precipitation intensity per hour.
  */
-export const enum Intensity {
-    /**
-     * The measurement is considered light.
-     */
-    light = "light",
-
-    /**
-     * The measurement is considered moderate.
-     */
-    moderate = "moderate",
-
-    /**
-     * The measurement is considered heavy.
-     */
-    heavy = "heavy",
-
-    /**
-     * The measurement is considered extreme.
-     */
-    violent = "violent",
-}
+export type Intensity =
+    | "light"
+    | "moderate"
+    | "heavy"
+    | "violent";
 
 /**
  * Determine the intensity of the given precipitation rate.
@@ -53,12 +37,12 @@ export function precipitationIntensityFrom(rateMMpH: number): Intensity {
     if (rateMMpH < 0.0) {
         throw new RangeError(`<${rateMMpH}> is not a valid rain precipitation intensity value`);
     } else if (rateMMpH <= 2.5) {
-        return Intensity.light;
+        return "light";
     } else if (rateMMpH <= 7.5) {
-        return Intensity.moderate;
+        return "moderate";
     } else if (rateMMpH <= 50) {
-        return Intensity.heavy;
+        return "heavy";
     } else {
-        return Intensity.violent;
+        return "violent";
     }
 }

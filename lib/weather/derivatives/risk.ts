@@ -20,33 +20,12 @@
 /**
  * The risk category of a measurement such as UV index.
  */
-export const enum Risk {
-    /**
-     * Low danger for the measured value for the average person.
-     */
-    low = "low",
-
-    /**
-     * Moderate danger for the measured value for the average person.
-     */
-    moderate = "moderate",
-
-    /**
-     * High danger for the measured value for the average person.
-     */
-    high = "high",
-
-    /**
-     * Very high danger for the measured value for the average person.
-     */
-    veryHigh = "veryHigh",
-
-
-    /**
-     * Extreme danger for the measured value for the average person.
-     */
-    extreme = "extreme",
-}
+export type Risk =
+    | "low"
+    | "moderate"
+    | "high"
+    | "veryHigh"
+    | "extreme";
 
 /**
  * Determine the risk a given UV Index poses to the average person.
@@ -56,15 +35,15 @@ export const enum Risk {
  */
 export function uvIndexRiskFrom(uvIndex: number): Risk {
     if (uvIndex >= 0 && uvIndex <= 2) {
-        return Risk.low;
+        return "low";
     } else if (uvIndex >= 3 && uvIndex <= 5) {
-        return Risk.moderate;
+        return "moderate";
     } else if (uvIndex >= 6 && uvIndex <= 7) {
-        return Risk.high;
+        return "high";
     } else if (uvIndex >= 8 && uvIndex <= 10) {
-        return Risk.veryHigh;
+        return "veryHigh";
     } else if (uvIndex >= 11) {
-        return Risk.extreme;
+        return "extreme";
     } else {
         throw new RangeError(`<${uvIndex}> is not a valid UV Index value`);
     }

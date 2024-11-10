@@ -101,289 +101,77 @@ export interface Metadata {
 /**
  * The direction of change of the sea level air pressure.
  */
-export const enum PressureTrend {
-    /**
-     * The sea level air pressure is increasing.
-     */
-    rising = "rising",
-
-    /**
-     * The sea level air pressure is decreasing.
-     */
-    falling = "falling",
-
-    /**
-     * The sea level air pressure is remaining about the same.
-     */
-    steady = "steady",
-}
+export type PressureTrend =
+    | "rising"
+    | "falling"
+    | "steady";
 
 /**
  * The system of units that the weather data is reported in.
  */
-export const enum UnitsSystem {
-    /**
-     * The metric system.
-     */
-    metric = "m",
-}
+export type UnitsSystem =
+    | "m";
 
 /**
  * The shape of the moon as seen by an observer on the ground at a given time.
  */
-export const enum MoonPhase {
-    /**
-     * The moon isn’t visible.
-     */
-    new = "new",
-
-    /**
-     * A crescent-shaped sliver of the moon is visible, and increasing in size.
-     */
-    waxingCrescent = "waxingCrescent",
-
-    /**
-     * Approximately half of the moon is visible, and increasing in size.
-     */
-    firstQuarter = "firstQuarter",
-
-    /**
-     * The entire disc of the moon is visible.
-     */
-    full = "full",
-
-    /**
-     * More than half of the moon is visible, and increasing in size.
-     */
-    waxingGibbous = "waxingGibbous",
-
-    /**
-     * More than half of the moon is visible, and decreasing in size.
-     */
-    waningGibbous = "waningGibbous",
-
-    /**
-     * Approximately half of the moon is visible, and decreasing in size.
-     */
-    thirdQuarter = "thirdQuarter",
-
-    /**
-     * A crescent-shaped sliver of the moon is visible, and decreasing in size.
-     */
-    waningCrescent = "waningCrescent",
-}
+export type MoonPhase =
+    | "new"
+    | "waxingCrescent"
+    | "firstQuarter"
+    | "full"
+    | "waxingGibbous"
+    | "waningGibbous"
+    | "thirdQuarter"
+    | "waningCrescent";
 
 /**
  * The type of precipitation forecasted to occur during the day.
  */
-export const enum PrecipitationType {
-    /**
-     * No precipitation is occurring.
-     */
-    clear = "clear",
-
-    /**
-     * An unknown type of precipitation is occuring.
-     */
-    precipitation = "precipitation",
-
-    /**
-     * Rain or freezing rain is falling.
-     */
-    rain = "rain",
-
-    /**
-     * Snow is falling.
-     */
-    snow = "snow",
-
-    /**
-     * Sleet or ice pellets are falling.
-     */
-    sleet = "sleet",
-
-    /**
-     * Hail is falling.
-     */
-    hail = "hail",
-
-    /**
-     * Winter weather (wintery mix or wintery showers) is falling.
-     */
-    mixed = "mixed",
-}
+export type PrecipitationType =
+    | "clear"
+    | "precipitation"
+    | "rain"
+    | "snow"
+    | "sleet"
+    | "hail"
+    | "mixed";
 
 /**
  * A description of the current weather condition.
  */
-export const enum WeatherCondition {
-    /**
-     * Blowing dust or sandstorm.
-     **/
-    blowingDust = "BlowingDust",
-
-    /**
-     * Clear.
-     **/
-    clear = "Clear",
-
-    /**
-     * Cloudy, overcast conditions.
-     **/
-    cloudy = "Cloudy",
-
-    /**
-     * Fog.
-     **/
-    foggy = "Foggy",
-
-    /**
-     * Haze.
-     **/
-    haze = "Haze",
-
-    /**
-     * Mostly clear.
-     **/
-    mostlyClear = "MostlyClear",
-
-    /**
-     * Mostly cloudy.
-     **/
-    mostlyCloudy = "MostlyCloudy",
-
-    /**
-     * Partly cloudy.
-     **/
-    partlyCloudy = "PartlyCloudy",
-
-    /**
-     * Smoky.
-     **/
-    smoky = "Smoky",
-
-    /**
-     * Breezy, light wind.
-     **/
-    breezy = "Breezy",
-
-    /**
-     * Windy.
-     **/
-    windy = "Windy",
-
-    /**
-     * Drizzle or light rain.
-     **/
-    drizzle = "Drizzle",
-
-    /**
-     * Heavy rain.
-     **/
-    heavyRain = "HeavyRain",
-
-    /**
-     * Thunderstorms covering less than 1/8 of the forecast area.
-     **/
-    isolatedThunderstorms = "IsolatedThunderstorms",
-
-    /**
-     * Rain.
-     **/
-    rain = "Rain",
-
-    /**
-     * Rain with visible sun.
-     **/
-    sunShowers = "SunShowers",
-
-    /**
-     * Numerous thunderstorms spread across up to 50% of the forecast area.
-     **/
-    scatteredThunderstorms = "ScatteredThunderstorms",
-
-    /**
-     * Notably strong thunderstorms.
-     **/
-    strongStorms = "StrongStorms",
-
-    /**
-     * Thunderstorms.
-     **/
-    thunderstorms = "Thunderstorms",
-
-    /**
-     * Frigid conditions, low temperatures, or ice crystals.
-     **/
-    frigid = "Frigid",
-
-    /**
-     * Hail.
-     **/
-    hail = "Hail",
-
-    /**
-     * High temperatures.
-     **/
-    hot = "Hot",
-
-    /**
-     * Flurries or light snow.
-     **/
-    flurries = "Flurries",
-
-    /**
-     * Sleet.
-     **/
-    sleet = "Sleet",
-
-    /**
-     * Snow.
-     **/
-    snow = "Snow",
-
-    /**
-     * Snow flurries with visible sun.
-     **/
-    sunFlurries = "SunFlurries",
-
-    /**
-     * Wintry mix.
-     **/
-    wintryMix = "WintryMix",
-
-    /**
-     * Blizzard.
-     **/
-    blizzard = "Blizzard",
-
-    /**
-     * Blowing or drifting snow.
-     **/
-    blowingSnow = "BlowingSnow",
-
-    /**
-     * Freezing drizzle or light rain.
-     **/
-    freezingDrizzle = "FreezingDrizzle",
-
-    /**
-     * Freezing rain.
-     **/
-    freezingRain = "FreezingRain",
-
-    /**
-     * Heavy snow.
-     **/
-    heavySnow = "HeavySnow",
-
-    /**
-     * Hurricane.
-     **/
-    hurricane = "Hurricane",
-
-    /**
-     * Tropical storm.
-     **/
-    tropicalStorm = "TropicalStorm",
-}
+export type WeatherCondition =
+    | "BlowingDust"
+    | "Clear"
+    | "Cloudy"
+    | "Foggy"
+    | "Haze"
+    | "MostlyClear"
+    | "MostlyCloudy"
+    | "PartlyCloudy"
+    | "Smoky"
+    | "Breezy"
+    | "Windy"
+    | "Drizzle"
+    | "HeavyRain"
+    | "IsolatedThunderstorms"
+    | "Rain"
+    | "SunShowers"
+    | "ScatteredThunderstorms"
+    | "StrongStorms"
+    | "Thunderstorms"
+    | "Frigid"
+    | "Hail"
+    | "Hot"
+    | "Flurries"
+    | "Sleet"
+    | "Snow"
+    | "SunFlurries"
+    | "WintryMix"
+    | "Blizzard"
+    | "BlowingSnow"
+    | "FreezingDrizzle"
+    | "FreezingRain"
+    | "HeavySnow"
+    | "Hurricane"
+    | "TropicalStorm";
