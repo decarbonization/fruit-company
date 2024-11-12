@@ -28,11 +28,35 @@ wHYtSkc1
 
                 // Inject an expired bearer token
                 Object.assign(token, {
-                    bearerToken: "eyJhbGciOiJFUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6Ijg2NzUzMDkiLCJpZCI6ImZydWl0LWNvbXBhbnkgdGVhbS5jb20uZnJ1aXQtY29tcGFueS53ZWF0aGVyIn0" +
+                    _bearerToken: "eyJhbGciOiJFUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6Ijg2NzUzMDkiLCJpZCI6ImZydWl0LWNvbXBhbnkgdGVhbS5jb20uZnJ1aXQtY29tcGFueS53ZWF0aGVyIn0" +
                         ".eyJzdWIiOiJjb20uZnJ1aXQtY29tcGFueS53ZWF0aGVyIiwiaWF0IjoxNzE5NTE0NjI5LCJleHAiOjE3MTk1MTQ2MzAsImlzcyI6ImZydWl0LWNvbXBhbnkgdGVhbSJ9" +
                         ".-b7V0FHuvRrlPVX50NYCEberekU6K-ScNHwlqa1Oaf9ENUbJfScWdfIXmKhFbYSVGUmmpFPuHkNLuYU6EWOBWg",
                 });
                 expect(token.isValid).toStrictEqual(false);
+            });
+        });
+
+        describe("#bearerToken", () => {
+            it("should be invalid before calling refresh", async () => {
+                const token = new MusicDeveloperToken(appId, teamId, keyId, privateKey);
+                expect(token.bearerToken).toBeUndefined();
+                await token.refresh({ fetch: globalThis.fetch });
+                expect(token.bearerToken).not.toBeUndefined();
+            });
+
+            it("should be invalid with expired token", async () => {
+                const token = new MusicDeveloperToken(appId, teamId, keyId, privateKey);
+
+                await token.refresh({ fetch: globalThis.fetch });
+                expect(token.bearerToken).not.toBeUndefined();
+
+                // Inject an expired bearer token
+                Object.assign(token, {
+                    _bearerToken: "eyJhbGciOiJFUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6Ijg2NzUzMDkiLCJpZCI6ImZydWl0LWNvbXBhbnkgdGVhbS5jb20uZnJ1aXQtY29tcGFueS53ZWF0aGVyIn0" +
+                        ".eyJzdWIiOiJjb20uZnJ1aXQtY29tcGFueS53ZWF0aGVyIiwiaWF0IjoxNzE5NTE0NjI5LCJleHAiOjE3MTk1MTQ2MzAsImlzcyI6ImZydWl0LWNvbXBhbnkgdGVhbSJ9" +
+                        ".-b7V0FHuvRrlPVX50NYCEberekU6K-ScNHwlqa1Oaf9ENUbJfScWdfIXmKhFbYSVGUmmpFPuHkNLuYU6EWOBWg",
+                });
+                expect(token.bearerToken).toBeUndefined();
             });
         });
 

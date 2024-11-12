@@ -39,23 +39,23 @@ export class MusicDeveloperToken implements SereneAuthority {
         private readonly keyId: string,
         private readonly privateKey: string | Buffer
     ) {
-        this.bearerToken = "";
+        this._bearerToken = "";
     }
 
     /**
      * The bearer token used to decorate requests.
      */
-    private bearerToken: string;
+    private _bearerToken: string;
 
     get retryLimit(): number {
         return 1;
     }
 
     get isValid(): boolean {
-        if (this.bearerToken === "") {
+        if (this._bearerToken === "") {
             return false;
         }
-        const payload = jwt.decode(this.bearerToken);
+        const payload = jwt.decode(this._bearerToken);
         if (payload === null || typeof payload !== 'object') {
             return false;
         }
@@ -67,8 +67,21 @@ export class MusicDeveloperToken implements SereneAuthority {
         return (expiration >= new Date());
     }
 
+    /**
+     * Access the bearer token returning `undefined` if the token is not valid.
+     * 
+     * Use this to share the same token between a backend using this
+     * library and a front end using the MusicKit JS library.
+     */
+    get bearerToken(): string | undefined {
+        if (!this.isValid) {
+            return undefined;
+        }
+        return this._bearerToken;
+    }
+
     async refresh({ }: SereneAuthorityRefreshOptions): Promise<void> {
-        this.bearerToken = jwt.sign({
+        this._bearerToken = jwt.sign({
             sub: this.appId,
         }, this.privateKey, {
             issuer: this.teamId,
@@ -87,7 +100,7 @@ export class MusicDeveloperToken implements SereneAuthority {
             );
         }
         return setRequestHeaders(fetchRequest, [
-            ["Authorization", `Bearer ${this.bearerToken}`],
+            ["Authorization", `Bearer ${this._bearerToken}`],
         ]);
     }
 
