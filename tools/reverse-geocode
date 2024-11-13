@@ -1,2 +1,2 @@
 #!/bin/sh
-npx ts-node "$(dirname "$0)/reverse-geocode.ts" $@
+npx ts-node "$(dirname "$0")/reverse-geocode.ts" $@
