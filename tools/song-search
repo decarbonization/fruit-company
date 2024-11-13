@@ -1,2 +1,2 @@
 #!/bin/sh
-npx ts-node "$(dirname "$0)/song-search.ts" $@
+npx ts-node "$(dirname "$0")/song-search.ts" $@
