@@ -18,7 +18,7 @@
  */
 
 import { addSeconds } from "date-fns";
-import jwt, { JwtHeader } from "jsonwebtoken";
+import { importPKCS8, SignJWT } from "jose";
 import { AuthorityError, SereneAuthority, SereneAuthorityAuthenticateOptions, SereneAuthorityRefreshOptions } from "serene-front";
 import { setRequestHeaders } from "serene-front/urls";
 import { MapErrorResponse, mapKitApiUrl } from "./models";
@@ -54,7 +54,7 @@ export class MapsToken implements SereneAuthority {
         private readonly appId: string,
         private readonly teamId: string,
         private readonly keyId: string,
-        private readonly privateKey: string | Buffer
+        private readonly privateKey: string,
     ) {
         this.accessToken = "";
         this.expiresAt = new Date(0);
@@ -79,17 +79,18 @@ export class MapsToken implements SereneAuthority {
     }
 
     async refresh({ fetch }: SereneAuthorityRefreshOptions): Promise<void> {
-        const authToken = jwt.sign({
-            sub: this.appId,
-        }, this.privateKey, {
-            issuer: this.teamId,
-            expiresIn: "1m",
-            keyid: this.keyId,
-            algorithm: "ES256",
-            header: {
+        const privateKeyPKCS8 = await importPKCS8(this.privateKey, "ES256");
+        const signBearerTokenPayload = new SignJWT({ sub: this.appId })
+            .setIssuer(this.teamId)
+            .setIssuedAt()
+            .setExpirationTime("1 m")
+            .setProtectedHeader({
+                alg: "ES256",
+                kid: this.keyId,
+                typ: "JWT",
                 id: `${this.teamId}.${this.appId}`,
-            } as unknown as JwtHeader,
-        });
+            });
+        const authToken = await signBearerTokenPayload.sign(privateKeyPKCS8);
 
         const response = await fetch(`${mapKitApiUrl}/token`, {
             headers: {

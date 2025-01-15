@@ -17,7 +17,7 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-import jwt, { JwtHeader } from "jsonwebtoken";
+import { decodeJwt, importPKCS8, SignJWT } from "jose";
 import { AuthorityError, SereneAuthority, SereneAuthorityAuthenticateOptions, SereneAuthorityRefreshOptions } from "serene-front";
 import { setRequestHeaders } from "serene-front/urls";
 
@@ -37,7 +37,7 @@ export class WeatherToken implements SereneAuthority {
         private readonly appId: string,
         private readonly teamId: string,
         private readonly keyId: string,
-        private readonly privateKey: string | Buffer
+        private readonly privateKey: string,
     ) {
         this.bearerToken = "";
     }
@@ -55,12 +55,12 @@ export class WeatherToken implements SereneAuthority {
         if (this.bearerToken === "") {
             return false;
         }
-        const payload = jwt.decode(this.bearerToken);
+        const payload = decodeJwt(this.bearerToken);
         if (payload === null || typeof payload !== 'object') {
             return false;
         }
         const rawExpiration = payload.exp;
-        if (rawExpiration === undefined) {
+        if (typeof rawExpiration !== 'number') {
             return false;
         }
         const expiration = new Date(rawExpiration * 1000);
@@ -68,17 +68,18 @@ export class WeatherToken implements SereneAuthority {
     }
 
     async refresh({ }: SereneAuthorityRefreshOptions): Promise<void> {
-        this.bearerToken = jwt.sign({
-            sub: this.appId,
-        }, this.privateKey, {
-            issuer: this.teamId,
-            expiresIn: "24h",
-            keyid: this.keyId,
-            algorithm: "ES256",
-            header: {
+        const privateKeyPKCS8 = await importPKCS8(this.privateKey, "ES256");
+        const signBearerTokenPayload = new SignJWT({ sub: this.appId })
+            .setIssuer(this.teamId)
+            .setIssuedAt()
+            .setExpirationTime("24 h")
+            .setProtectedHeader({
+                alg: "ES256",
+                kid: this.keyId,
+                typ: "JWT",
                 id: `${this.teamId}.${this.appId}`,
-            } as unknown as JwtHeader,
-        });
+            });
+        this.bearerToken = await signBearerTokenPayload.sign(privateKeyPKCS8);
     }
 
     async authenticate({ fetchRequest }: SereneAuthorityAuthenticateOptions): Promise<Request> {

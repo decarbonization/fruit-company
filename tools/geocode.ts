@@ -42,7 +42,7 @@ const opts = program.opts();
         opts.app,
         opts.team,
         opts.keyid,
-        await fs.readFile(opts.keyfile),
+        await fs.readFile(opts.keyfile, { encoding: 'utf8' }),
     );
     const getPlaces = new GeocodeAddress({
         query: opts.query,

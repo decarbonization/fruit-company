@@ -57,9 +57,8 @@
     "typescript": "^5.4.5"
   },
   "dependencies": {
-    "@types/jsonwebtoken": "^9.0.6",
     "date-fns": "^3.6.0",
-    "jsonwebtoken": "^9.0.2"
+    "jose": "^5.9.6"
   },
   "peerDependencies": {
     "serene-front": "0.2.1"
